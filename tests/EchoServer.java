@@ -20,19 +20,7 @@ public class EchoServer extends Thread
       {
         System.out.println("Waiting for client on port " + serverSocket.getLocalPort());
         Socket server = serverSocket.accept();
-
-        System.out.println("Connected to " + server.getRemoteSocketAddress());
-        DataInputStream in = new DataInputStream(server.getInputStream());
-        DataOutputStream out = new DataOutputStream(server.getOutputStream());
-        while(true)
-        {
-          String toEcho = in.readUTF();
-          if(toEcho.compareTo("exit") != 0)
-            out.writeUTF("@Echo: " + toEcho);
-          else
-            break;
-        }
-        server.close();
+        new EchoThread(server).start();
       }
       catch(IOException e)
       {
