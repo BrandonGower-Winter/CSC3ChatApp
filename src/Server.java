@@ -44,8 +44,12 @@ public class Server extends Thread
       }
     }
   }
-
-  public void send(Message msg,String sender)
+  /*
+  *This is where the file codes should be managed
+  * 0 is message. if target is all treat as broadcast.
+  * 1 is file.
+  */
+  public synchronized void send(Message msg,String sender)
   {
     clients.get(msg.getTarget()).sendToSocket(msg,sender);
   }

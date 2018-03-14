@@ -27,6 +27,7 @@ public class ServerClientThread extends Thread
         server.send(Server.parseMesseage(toSend),clientName);
         //Ignore this does nothing healthy right now
         if(toSend.compareTo("exit") == 0)
+          serverClientConnection.close();
           break;
       }
       serverClientConnection.close();
@@ -37,7 +38,7 @@ public class ServerClientThread extends Thread
     }
   }
 
-  public void sendToSocket(Message msg,String sender)
+  public synchronized void sendToSocket(Message msg,String sender)
   {
     try
     {
