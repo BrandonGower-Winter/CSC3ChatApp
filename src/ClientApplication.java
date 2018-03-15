@@ -6,8 +6,8 @@ public class ClientApplication
 {
   public static void main(String args[])
   {
-    String serverName = args[0];
-    int port = Integer.parseInt(args[1]);
+    String serverName = "localhost";
+    int port = 4444;
     String name;
     try
     {
