@@ -30,6 +30,7 @@ runEchoServer:
 runEchoClient:
 		java -cp ./bin/ EchoClient localhost $(PORT)
 
+
 runServer:
 		java -cp ./bin/ Server $(PORT)
 

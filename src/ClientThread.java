@@ -4,11 +4,9 @@ import java.io.*;
 public class ClientThread extends Thread
 {
   private Socket client;
-  private String name;
 
-  public ClientThread(String name,Socket client)
+  public ClientThread(Socket client)
   {
-    this.name = name;
     this.client = client;
   }
 
@@ -22,7 +20,15 @@ public class ClientThread extends Thread
       {
         Message msg = Server.parseMesseage(in.readUTF());
         //Msg code management would go here
-        System.out.println("@" + msg.getTarget() + ": " + msg.getContent());
+        switch(msg.getCommand())
+        {
+          case 0:
+                System.out.println("@" + msg.getTarget() + ": " + msg.getContent());
+                break;
+          case 50:
+                notifyClientLoginStatus(msg);
+                break;
+        }
         //Ignore this.
         if(msg.getContent().compareTo("exit") == 0)
           break;
@@ -35,4 +41,18 @@ public class ClientThread extends Thread
       e.printStackTrace();
     }
   }
+
+  private void notifyClientLoginStatus(Message msg)
+  {
+    int status = Integer.parseInt(msg.getContent());
+    if(status == 0)
+    {
+      ClientApplication.changeClientLoginStatus(1);
+    }
+    else if(status == 1)
+    {
+      ClientApplication.changeClientLoginStatus(-1);
+    }
+  }
+
 }

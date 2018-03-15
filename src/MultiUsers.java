@@ -7,7 +7,10 @@ class MultiUsers extends Thread
 {
     private PseudoDatabase database = new PseudoDatabase();
 
-
+    public synchronized boolean registration(Message message)
+    {
+      return database.register(message.getTarget(),message.getContent());
+    }
 
     synchronized void registration(Message message, String sender, HashMap<String,ServerClientThread> clients)
     {

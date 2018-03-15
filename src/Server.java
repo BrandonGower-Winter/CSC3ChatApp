@@ -30,11 +30,25 @@ public class Server extends Thread
                 Socket clientConnection = serverSocket.accept();
                 //Will make neater later
                 DataInputStream tempInStream = new DataInputStream(clientConnection.getInputStream());
-                String clientName = tempInStream.readUTF();
-                ServerClientThread clientThread = new ServerClientThread(clientName,clientConnection,this);
+                DataOutputStream tempOutputStream = new DataOutputStream(clientConnection.getOutputStream());
+
+                Message clientLoginDetails = parseMesseage(tempInStream.readUTF());
+                //Manage user login
+                //Will add to function later
+                //Add login and registration differentiation.
+                if(multiUsers.registration(clientLoginDetails)) //Successful registration
+                {
+                  tempOutputStream.writeUTF("50|" + clientLoginDetails.getTarget() + "|0");
+                }
+                else //Registration Unsuccessful
+                {
+                  tempOutputStream.writeUTF("50|" + clientLoginDetails.getTarget() + "|1");
+                  continue; //Skip rest because we don't want to create this client
+                }
+                ServerClientThread clientThread = new ServerClientThread(clientLoginDetails.getTarget() ,clientConnection,this);
                 //Will add duplicate name check later
-                clients.put(clientName,clientThread);
-                System.out.println("Registered new user: " + clientName);
+                clients.put(clientLoginDetails.getTarget() ,clientThread);
+                System.out.println("Registered new user: " + clientLoginDetails.getTarget());
                 clientThread.start();
             }
             catch(IOException e)
@@ -94,7 +108,15 @@ public class Server extends Thread
 
     public static void main(String[] args)
     {
-        int port = 4444;
+        int port;
+        if(args.length < 1)
+        {
+          port = Integer.parseInt(args[0]);
+        }
+        else
+        {
+          port = 4444;
+        }
         try
         {
             Server s = new Server(port);
