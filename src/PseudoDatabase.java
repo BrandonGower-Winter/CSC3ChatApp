@@ -2,7 +2,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
-class PseudoDatabase {
+public class PseudoDatabase {
     private HashMap<String,ArrayList<String>> userData = new HashMap<>(0);
     private HashMap<String,ArrayList<String>> groupData = new HashMap<>(0);
     HashMap<String,ArrayList<String>> pendingData = new HashMap<>(0);   //will use this to save data sent to offline users
