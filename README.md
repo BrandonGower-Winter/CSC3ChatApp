@@ -50,3 +50,5 @@ Code 50: Confirm user login status
   login status:
               0: Login Successful
               1: Login Unsuccessful
+              2: Registration Successful
+              3: Registration Unsuccessful

@@ -44,14 +44,16 @@ public class ClientThread extends Thread
 
   private void notifyClientLoginStatus(Message msg)
   {
-    int status = Integer.parseInt(msg.getContent());
-    if(status == 0)
+    switch(Integer.parseInt(msg.getContent()))
     {
+      case 0:
+      case 2:
       ClientApplication.changeClientLoginStatus(1);
-    }
-    else if(status == 1)
-    {
+      break;
+      case 1:
+      case 3:
       ClientApplication.changeClientLoginStatus(-1);
+      break;
     }
   }
 

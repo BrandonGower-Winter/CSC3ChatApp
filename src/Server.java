@@ -40,9 +40,18 @@ public class Server extends Thread
         }
     }
 
-    public boolean register(Message msg)
+    public boolean register(Message msg) //Registers and logs in new user
     {
-        return multiUsers.registration(msg);
+        if(multiUsers.registration(msg))
+        {
+          return multiUsers.login(msg);
+        }
+        return false;
+    }
+
+    public boolean login(Message msg)
+    {
+        return multiUsers.login(msg);
     }
 
     public void addLoggedInClient(String name, ServerClientThread thread)

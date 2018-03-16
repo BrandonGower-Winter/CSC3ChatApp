@@ -12,6 +12,11 @@ class MultiUsers extends Thread
       return database.register(message.getTarget(),message.getContent());
     }
 
+    public synchronized boolean login(Message message)
+    {
+      return database.login(message.getTarget(),message.getContent());
+    }
+
     synchronized void registration(Message message, String sender, HashMap<String,ServerClientThread> clients)
     {
         if (database.register(message.getTarget(),message.getContent()))

@@ -7,7 +7,13 @@ public class PseudoDatabase {
     private HashMap<String,ArrayList<String>> groupData = new HashMap<>(0);
     HashMap<String,ArrayList<String>> pendingData = new HashMap<>(0);   //will use this to save data sent to offline users
 
-
+    public PseudoDatabase()
+    {
+      ArrayList<String> flag = new ArrayList<>(0);
+      flag.add("123");
+      flag.add("0");
+      userData.put("guest",flag);
+    }
 
     synchronized boolean register(String name, String password)
     {
