@@ -81,6 +81,7 @@ public class ClientApplication
         {
           System.out.println("Registration Failure! Account Already Exists!!!");
           clientLoginStatus = 0;
+
         }
         return response;
       }

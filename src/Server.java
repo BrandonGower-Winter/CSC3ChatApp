@@ -29,27 +29,7 @@ public class Server extends Thread
                 System.out.println("Waiting for client on port " + serverSocket.getLocalPort());
                 Socket clientConnection = serverSocket.accept();
                 //Will make neater later
-                DataInputStream tempInStream = new DataInputStream(clientConnection.getInputStream());
-                DataOutputStream tempOutputStream = new DataOutputStream(clientConnection.getOutputStream());
-
-                Message clientLoginDetails = parseMesseage(tempInStream.readUTF());
-                //Manage user login
-                //Will add to function later
-                //Add login and registration differentiation.
-                if(multiUsers.registration(clientLoginDetails)) //Successful registration
-                {
-                  tempOutputStream.writeUTF("50|" + clientLoginDetails.getTarget() + "|0");
-                }
-                else //Registration Unsuccessful
-                {
-                  tempOutputStream.writeUTF("50|" + clientLoginDetails.getTarget() + "|1");
-                  continue; //Skip rest because we don't want to create this client
-                }
-                ServerClientThread clientThread = new ServerClientThread(clientLoginDetails.getTarget() ,clientConnection,this);
-                //Will add duplicate name check later
-                clients.put(clientLoginDetails.getTarget() ,clientThread);
-                System.out.println("Registered new user: " + clientLoginDetails.getTarget());
-                clientThread.start();
+                new ServerClientThread(clientConnection,this).start();
             }
             catch(IOException e)
             {
@@ -58,6 +38,16 @@ public class Server extends Thread
                 break;
             }
         }
+    }
+
+    public boolean register(Message msg)
+    {
+        return multiUsers.registration(msg);
+    }
+
+    public void addLoggedInClient(String name, ServerClientThread thread)
+    {
+      clients.put(name ,thread);
     }
 
     public void send(Message msg,String sender)
