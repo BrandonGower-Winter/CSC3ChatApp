@@ -64,12 +64,12 @@ public class Server extends Thread
         switch (msg.getCommand())// *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *
         {
             case 0:
-                if (msg.getTarget().compareTo("all")==0)                                                                //sends update to all clients in the server
-                    new Broadcaster(clients,msg,sender).start();
+                if (msg.getTarget().compareTo("all")==0)    //sends message to all users the sender is friends with.
+                    new Broadcaster(multiUsers,clients,msg,sender).start();
                 else if(multiUsers.isFriend(sender,msg.getTarget()))
                     clients.get(msg.getTarget()).sendToSocket(msg,sender);
                 else
-                    System.out.println(sender " attempted to message " + msg.getTarget() + " but they are not friends.")
+                    System.out.println(sender + " attempted to message " + msg.getTarget() + " but they are not friends.");
                 break;
 
             case 1:
