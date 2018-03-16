@@ -65,7 +65,7 @@ public class Server extends Thread
         {
             case 0:
                 if (msg.getTarget().compareTo("all")==0)    //sends message to all users the sender is friends with.
-                    new Broadcaster(multiUsers,clients,msg,sender).start();
+                    new Broadcaster(multiUsers,clients,msg,sender,false).start();
                 else if(multiUsers.isFriend(sender,msg.getTarget()))
                     clients.get(msg.getTarget()).sendToSocket(msg,sender);
                 else
@@ -107,6 +107,13 @@ public class Server extends Thread
 
     }
 
+    public synchronized void serverBroadcast(String messageContent)
+    {
+      Message msg = new Message(0,"all",messageContent);
+      new Broadcaster(multiUsers,clients,msg,"Server",true).start();
+      System.out.println("Got here!");
+    }
+
     public static void main(String[] args)
     {
         int port;
@@ -121,7 +128,28 @@ public class Server extends Thread
         try
         {
             Server s = new Server(port);
-            s.run(); //Intentional
+            s.start();
+            Scanner serverCommands = new Scanner(System.in);
+            serverLifeTimeLoop:while(true)
+            {
+              String command = serverCommands.nextLine();
+              switch(command)
+              {
+                case "broadcast":
+                  System.out.println("Enter broadcast message:");
+                  s.serverBroadcast(serverCommands.nextLine());
+                  break;
+                case "save":
+                  System.out.println("Saving userbase");
+                  //save userbase.
+                  break;
+                case "exit":
+                  System.out.println("Shutting down server...");
+                  //save userbase
+                  break serverLifeTimeLoop;
+              }
+            }
+            System.out.println("Got here");
         }
         catch(IOException e)
         {
