@@ -7,6 +7,9 @@ Guest logins available:
 
 Message Format: <command>|<target>|<content>
 
+Users File Format: <username>|<password>
+Friends File Format: <username>|<friend1>,<friend2>...<friendN>
+
 Code 0: simple communication between 2 clients and if target is "all", a broadcast is sent to all live clients
 
         format: 0|<target>|<content>

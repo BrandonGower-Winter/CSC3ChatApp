@@ -15,12 +15,31 @@ public class PseudoDatabase {
       try
       {
         //Adding users
-        Scanner scFile = new Scanner(new File("./resources/users"));
-        while(scFile.hasNextLine())
+        Scanner scUserFile = new Scanner(new File("./resources/users"));
+        while(scUserFile.hasNextLine())
         {
-          Scanner scLine = new Scanner(scFile.nextLine()).useDelimiter("\\|");
+          Scanner scLine = new Scanner(scUserFile.nextLine()).useDelimiter("\\|");
           register(scLine.next(),scLine.next());
+          scLine.close();
         }
+        scUserFile.close();
+
+        //Giving the users friends.
+        Scanner scFriendsFile = new Scanner(new File("./resources/friends"));
+        while(scFriendsFile.hasNextLine())
+        {
+          Scanner scLine = new Scanner(scFriendsFile.nextLine()).useDelimiter("\\|");
+          String username = scLine.next();
+          Scanner scFriends = new Scanner(scLine.next()).useDelimiter(",");
+          while(scFriends.hasNext())
+          {
+            addFriend(username,scFriends.next(),true);
+          }
+          scLine.close();
+          scFriends.close();
+        }
+        scFriendsFile.close();
+
       }
       catch(FileNotFoundException e)
       {
@@ -79,13 +98,24 @@ public class PseudoDatabase {
         if (userData.containsKey(friend) && userData.containsKey(user) && userData.get(user).get(1).compareTo("1")==0)
         {
             userData.get(user).add(friend);
+            System.out.println(user + " is now friends with " + friend);
             return true;
         }
         else
             return false;
     }
-
-
+    //Used on startup to setup friends list
+    private synchronized  boolean addFriend(String user,String friend, boolean isServer)
+    {
+      if (userData.containsKey(friend) && userData.containsKey(user))
+      {
+          userData.get(user).add(friend);
+          System.out.println(user + " is now friends with " + friend);
+          return true;
+      }
+      else
+          return false;
+    }
 
     synchronized ArrayList<String> createGroup(String name, String members, String owner)
     {
