@@ -1,6 +1,9 @@
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Scanner;
+import java.io.File;
+import java.io.FileNotFoundException;
 
 public class PseudoDatabase {
     private HashMap<String,ArrayList<String>> userData = new HashMap<>(0);
@@ -9,10 +12,20 @@ public class PseudoDatabase {
 
     public PseudoDatabase()
     {
-      ArrayList<String> flag = new ArrayList<>(0);
-      flag.add("123");
-      flag.add("0");
-      userData.put("guest",flag);
+      try
+      {
+        //Adding users
+        Scanner scFile = new Scanner(new File("./resources/users"));
+        while(scFile.hasNextLine())
+        {
+          Scanner scLine = new Scanner(scFile.nextLine()).useDelimiter("\\|");
+          register(scLine.next(),scLine.next());
+        }
+      }
+      catch(FileNotFoundException e)
+      {
+        System.out.println("Users database not found");
+      }
     }
 
     synchronized boolean register(String name, String password)
@@ -26,6 +39,7 @@ public class PseudoDatabase {
             flag.add(password);
             flag.add("0");
             userData.put(name,flag);
+            System.out.println("Registered User " + name + " with password " + password);
             return true;
         }
     }

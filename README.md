@@ -1,6 +1,9 @@
 # CSC3ChatApp
 Chat App for CSC3002F
 
+Guest logins available:
+  Username: guest1, guest2, guest3
+  Password: 123, 456, 789
 
 Message Format: <command>|<target>|<content>
 
