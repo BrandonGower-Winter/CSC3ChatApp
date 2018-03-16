@@ -71,7 +71,10 @@ class MultiUsers extends Thread
     }
 
 
-
+    public synchronized boolean isFriend(String user,String friend)
+    {
+      return database.isFriend(user,friend);
+    }
 
     //TODO Ensure that all users in a group are notfied that they have been added on a new group
     void createGroup(Message msg, HashMap<String, ServerClientThread> clients, String sender) {

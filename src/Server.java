@@ -66,8 +66,10 @@ public class Server extends Thread
             case 0:
                 if (msg.getTarget().compareTo("all")==0)                                                                //sends update to all clients in the server
                     new Broadcaster(clients,msg,sender).start();
+                else if(multiUsers.isFriend(sender,msg.getTarget()))
+                    clients.get(msg.getTarget()).sendToSocket(msg,sender);
                 else
-                    clients.get(msg.getTarget()).sendToSocket(msg,sender);                                              //one to one communication without registration
+                    System.out.println(sender " attempted to message " + msg.getTarget() + " but they are not friends.")
                 break;
 
             case 1:

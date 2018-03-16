@@ -117,6 +117,22 @@ public class PseudoDatabase {
           return false;
     }
 
+    public synchronized boolean isFriend(String user, String friend)
+    {
+      if(userData.containsKey(friend) && userData.containsKey(user))
+      {
+        if(userData.get(user).contains(friend))
+        {
+          return true;
+        }
+        return false;
+      }
+      else
+      {
+        return false;
+      }
+    }
+
     synchronized ArrayList<String> createGroup(String name, String members, String owner)
     {
         if (groupData.containsKey(name))
