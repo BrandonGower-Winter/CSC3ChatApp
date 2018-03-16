@@ -1,22 +1,31 @@
 package GUI;
 
-import com.jfoenix.controls.JFXListView;
-import com.jfoenix.controls.JFXTabPane;
-import com.jfoenix.controls.JFXTextArea;
-import com.jfoenix.controls.JFXTextField;
+import com.jfoenix.controls.*;
+import com.jfoenix.transitions.hamburger.HamburgerSlideCloseTransition;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollBar;
 import javafx.scene.control.Tab;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+
+import java.io.IOException;
 
 public class Controller1 {
     @FXML private JFXTabPane tabPane;
     @FXML private JFXTextArea chatSpace;
+    @FXML private JFXHamburger hamburger;
+    @FXML private HBox hBox;
+    @FXML private JFXDrawer drawer;
 
     private Tab groups, chats, contacts;
-    JFXListView<Label> groupList = new JFXListView<>();
-    JFXListView<Label> chatsList = new JFXListView<>();
-    JFXListView<Label> contactsList = new JFXListView<>();
+    private JFXListView<Label> groupList = new JFXListView<>();
+    private JFXListView<Label> chatsList = new JFXListView<>();
+    private JFXListView<Label> contactsList = new JFXListView<>();
 
     @FXML public void initialize()
     {
@@ -58,7 +67,7 @@ public class Controller1 {
                 "Me: Wassup\n"+
                 "User1: Hi\n"+
                 "User2: Hey\n"+
-                "Me: Wassup"+
+                "Me: Wassup\n"+
                 "User1: Hi\n"+
                 "User2: Hey\n"+
                 "Me: Wassup\n"+
@@ -68,6 +77,36 @@ public class Controller1 {
 
 
 
+        //handling hamburger
+        HamburgerSlideCloseTransition burgerTask = new HamburgerSlideCloseTransition(hamburger);
+        burgerTask.setRate(-1);
+        hamburger.addEventHandler(MouseEvent.MOUSE_PRESSED, (e)->{
+            burgerTask.setRate(burgerTask.getRate()*-1);
+            burgerTask.play();
+            burgerPressed();
+        });
 
+
+        try {
+            VBox box = FXMLLoader.load(getClass().getResource("Drawer.fxml"));
+            drawer.setSidePane(box);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        ;
+    }
+
+
+
+    void burgerPressed(){
+        if (drawer.isShown())
+        {
+            drawer.close();
+        }
+        else
+        {
+            drawer.open();
+        }
     }
 }
