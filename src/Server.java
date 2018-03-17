@@ -65,15 +65,33 @@ public class Server extends Thread
         {
             case 0:
                 if (msg.getTarget().compareTo("all")==0)    //sends message to all users the sender is friends with.
-                    new Broadcaster(multiUsers,clients,msg,sender,false).start();
+                {
+                  new Broadcaster(multiUsers,clients,msg,sender,false).start();
+                  System.out.println("User: @" + sender + " broadcasted: " + msg.getContent());
+                }
                 else if(multiUsers.isFriend(sender,msg.getTarget()))
-                    clients.get(msg.getTarget()).sendToSocket(msg,sender);
+                {
+                  System.out.println("User: @" + sender + " messaged " +msg.getTarget() + ": " + msg.getContent());
+                  clients.get(msg.getTarget()).sendToSocket(msg,sender);
+                }
                 else
                     System.out.println(sender + " attempted to message " + msg.getTarget() + " but they are not friends.");
                 break;
 
             case 1:
-                //file functionality
+                System.out.println("File Recieved");
+                //System.out.println(msg.getContent());
+                //Store data in serverclient thread
+                //Ask client if they want to receive file
+                //if no delete data.
+                //if yes send data.
+                if(multiUsers.isFriend(sender,msg.getTarget()))
+                {
+                  System.out.println("User: @" + sender + " is sending a file to " +msg.getTarget());
+                  clients.get(msg.getTarget()).sendFilePermissionMessage(msg,sender);
+                }
+                else
+                    System.out.println(sender + " attempted to message " + msg.getTarget() + " but they are not friends.");
                 break;
 
             case 2:
@@ -102,6 +120,14 @@ public class Server extends Thread
                 break;
             case 9:
                 multiUsers.groupMessage(msg,clients,sender);
+                break;
+            case 10:
+                if(Integer.parseInt(msg.getContent()) == 0)
+                  clients.get(sender).sendFile(msg.getTarget(),true);
+                  //System.out.println("Sender is confirming " + msg.getTarget() + "'s file");
+                else
+                  clients.get(sender).sendFile(msg.getTarget(),false);
+                  //System.out.println("Sender is denying " + msg.getTarget() + "'s file");
                 break;
         }                       // *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *
 

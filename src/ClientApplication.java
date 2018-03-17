@@ -1,12 +1,14 @@
 import java.net.*;
 import java.io.*;
 import java.util.Scanner;
+import java.util.Arrays;
+import java.nio.file.Files;
 
 public class ClientApplication
 {
 
   private static int clientLoginStatus = 0;
-
+  private static String username;
   public static synchronized void changeClientLoginStatus(int i)
   {
     if(i > -2 && i < 2)
@@ -43,14 +45,26 @@ public class ClientApplication
       new ClientThread(client).start();
       //Will make neater
       while(!manageUserLogin(out,input)){}
-
       //Manages user output.
       while(true)
       {
-        String toSend = input.nextLine();
-        out.writeUTF(toSend);
+        Message toSend = Server.parseMesseage(input.nextLine());
+        switch(toSend.getCommand())
+        {
+          case 1:
+            File f = new File(toSend.getContent());
+            byte[] fileBytes = Files.readAllBytes(f.toPath());
+            String fileData = f.getName() + "%";
+
+            fileData += new String(fileBytes,"UTF-8");
+            toSend.setContent(fileData);
+            out.writeUTF(toSend.toString());
+            break;
+          default:
+            out.writeUTF(toSend.toString());
+        }
         //Ignore this.
-        if(toSend.compareTo("exit") == 0)
+        if(toSend.getContent().compareTo("exit") == 0)
           break;
 
       }
@@ -71,10 +85,15 @@ public class ClientApplication
       if(Integer.parseInt(input.nextLine())== 1)
       {
         System.out.println("Register... Type: 2|<Username>|<Password>");
-        out.writeUTF(input.nextLine());
+        String userLoginDetails = input.nextLine();
+        out.writeUTF(userLoginDetails);
         boolean response = waitClientLoginStatus();
         if(response)
         {
+          Scanner scLine = new Scanner(userLoginDetails).useDelimiter("\\|");
+          scLine.next();
+          username = scLine.next();
+          scLine.close();
           System.out.println("Registration Successful!");
         }
         else
@@ -88,10 +107,15 @@ public class ClientApplication
       else
       {
         System.out.println("Login... Type: 3|<Username>|<Password>");
-        out.writeUTF(input.nextLine());
+        String userLoginDetails = input.nextLine();
+        out.writeUTF(userLoginDetails);
         boolean response = waitClientLoginStatus();
         if(response)
         {
+          Scanner scLine = new Scanner(userLoginDetails).useDelimiter("\\|");
+          scLine.next();
+          username = scLine.next();
+          scLine.close();
           System.out.println("Login Successful!");
         }
         else

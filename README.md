@@ -44,10 +44,17 @@ Code 7: add a person to a group
     format: 7|<groupname>|<friend's username>
 
 
-Code 8: send a message to a group
+Code 9: send a message to a group
 
-    format: 8|<group name>|<content>
+    format: 9|<group name>|<content>
 
+Code 10: confirm file send;
+
+    format 10|<target>|<confirmation status>
+
+    confirmation status:
+      0: yes
+      1: no
 
 Code 50: Confirm user login status
 
@@ -58,3 +65,10 @@ Code 50: Confirm user login status
               1: Login Unsuccessful
               2: Registration Successful
               3: Registration Unsuccessful
+
+Code 51: Send user file status
+
+  format: 51|<Sender>|<file name>
+
+Code 52: Send user file
+  format 52|sender|<filename>%<filedata>

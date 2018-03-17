@@ -1,6 +1,6 @@
 import java.net.*;
 import java.io.*;
-
+import javax.swing.JOptionPane;
 public class ClientThread extends Thread
 {
   private Socket client;
@@ -28,6 +28,19 @@ public class ClientThread extends Thread
           case 50:
                 notifyClientLoginStatus(msg);
                 break;
+          case 51:
+              if(JOptionPane.showConfirmDialog(null,"@" + msg.getTarget() + " wants to send file: " + msg.getContent(),"File from " + msg.getTarget(),JOptionPane.YES_NO_OPTION)==0)
+              {
+                sendFileConfirmation(msg.getTarget(),true);
+              }
+              else
+              {
+                sendFileConfirmation(msg.getTarget(),false);
+              }
+              break;
+          case 52:
+              System.out.println("Received" + msg.toString());
+              break;
         }
         //Ignore this.
         if(msg.getContent().compareTo("exit") == 0)
@@ -35,6 +48,26 @@ public class ClientThread extends Thread
 
       }
       client.close();
+    }
+    catch(IOException e)
+    {
+      e.printStackTrace();
+    }
+  }
+
+  private void sendFileConfirmation(String target,boolean receiveFile)
+  {
+    try
+    {
+      DataOutputStream out = new DataOutputStream(client.getOutputStream());
+      if(receiveFile)
+      {
+        out.writeUTF("10|"+target+"|0");
+      }
+      else
+      {
+        out.writeUTF("10|"+target+"|1");
+      }
     }
     catch(IOException e)
     {
