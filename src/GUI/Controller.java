@@ -38,5 +38,28 @@ public class Controller {
 
     }
 
+    @FXML void reg(ActionEvent event){
+
+        //TODO check if user is a duplicate and insert user to database
+        if (true)
+        {
+            try
+            {
+                ((Stage) ((Node)event.getSource()).getScene().getWindow()).setScene(new Scene(FXMLLoader.load(getClass().getResource("Home.fxml"))));
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+        }
+        else
+            {
+                userN.clear();
+                userN.setPromptText("Username taken!");
+                userPass.clear();
+            }
+
+    }
+
 
 }
