@@ -9,7 +9,7 @@ class MultiUsers extends Thread
 
     public synchronized boolean registration(Message message)
     {
-      return database.register(message.getTarget(),message.getContent());
+      return database.register(message.getTarget(),message.getContent(),false);
     }
 
     public synchronized boolean login(Message message)
@@ -19,7 +19,7 @@ class MultiUsers extends Thread
 
     synchronized void registration(Message message, String sender, HashMap<String,ServerClientThread> clients)
     {
-        if (database.register(message.getTarget(),message.getContent()))
+        if (database.register(message.getTarget(),message.getContent(),false))
             clients.get(sender).sendToSocket(new Message(2,sender,"REGISTRATION SUCCESSFUL!\nPLEASE LOGIN TO USE YOUR ACCOUNT"),sender);
         else
             clients.get(sender).sendToSocket(new Message(2,sender,"USERNAME ALREADY TAKEN!"),sender);

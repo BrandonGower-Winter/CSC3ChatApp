@@ -2,10 +2,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Scanner;
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.*;
 
 public class PseudoDatabase {
+
+    //Used in database
     private HashMap<String,ArrayList<String>> userData = new HashMap<>(0);
     private HashMap<String,ArrayList<String>> groupData = new HashMap<>(0);
     HashMap<String,ArrayList<String>> pendingData = new HashMap<>(0);   //will use this to save data sent to offline users
@@ -19,7 +20,7 @@ public class PseudoDatabase {
         while(scUserFile.hasNextLine())
         {
           Scanner scLine = new Scanner(scUserFile.nextLine()).useDelimiter("\\|");
-          register(scLine.next(),scLine.next());
+          register(scLine.next(),scLine.next(),true);
           scLine.close();
         }
         scUserFile.close();
@@ -39,6 +40,7 @@ public class PseudoDatabase {
           scFriends.close();
         }
         scFriendsFile.close();
+        //Read group data here
 
       }
       catch(FileNotFoundException e)
@@ -47,7 +49,7 @@ public class PseudoDatabase {
       }
     }
 
-    synchronized boolean register(String name, String password)
+    synchronized boolean register(String name, String password,boolean fromFile)
     {
         if (userData.containsKey(name))
             return false;
@@ -58,6 +60,8 @@ public class PseudoDatabase {
             flag.add(password);
             flag.add("0");
             userData.put(name,flag);
+            if(!fromFile)
+              writeNewUser(name,password);
             System.out.println("Registered User " + name + " with password " + password);
             return true;
         }
@@ -95,10 +99,11 @@ public class PseudoDatabase {
      * */
     synchronized boolean addFriend(String user, String friend)
     {
-        if (userData.containsKey(friend) && userData.containsKey(user) && userData.get(user).get(1).compareTo("1")==0)
+        if (!isFriend(user,friend) && userData.get(user).get(1).compareTo("1")==0)
         {
             userData.get(user).add(friend);
             System.out.println(user + " is now friends with " + friend);
+            writeNewFriend();
             return true;
         }
         else
@@ -180,6 +185,70 @@ public class PseudoDatabase {
         return string;
     }
 
+
+    private void writeNewUser(String user, String password)
+    {
+      try
+      {
+        FileWriter userFile = new FileWriter("./resources/users",true);//True appends to file
+        BufferedWriter userFileBuffer = new BufferedWriter(userFile); //Use bw because writing to files is expensive;
+        PrintWriter printer = new PrintWriter(userFileBuffer);
+
+        printer.println(user + "|" + password);
+
+        printer.close();
+        userFileBuffer.close();
+        userFile.close();
+      }
+      catch(IOException e)
+      {
+        e.printStackTrace();
+      }
+    }
+
+    private void writeNewFriend()
+    {
+      try
+      {
+        FileWriter userFile = new FileWriter("./resources/friends",false);//false clears file
+        BufferedWriter userFileBuffer = new BufferedWriter(userFile); //Use bw because writing to files is expensive;
+        PrintWriter printer = new PrintWriter(userFileBuffer);
+
+        for(String user : userData.keySet())
+        {
+          String toPrint = user + "|";
+          ArrayList<String> userFriends = userData.get(user);
+          if(userFriends.size() < 3)
+          {
+            continue;
+          }
+          for(int i = 0; i < userFriends.size(); i++)
+          {
+            if(i==0 || i== 1)
+            {
+              continue;
+            }
+            else if(i == userFriends.size()-1)
+            {
+              toPrint += userFriends.get(i);
+            }
+            else
+            {
+              toPrint += userFriends.get(i) + ",";
+            }
+          }
+          printer.println(toPrint);
+        }
+
+        printer.close();
+        userFileBuffer.close();
+        userFile.close();
+      }
+      catch(IOException e)
+      {
+        e.printStackTrace();
+      }
+    }
 
     public HashMap<String, ArrayList<String>> getUserData() {
         return userData;
