@@ -1,15 +1,15 @@
 import java.net.*;
 import java.io.*;
 
-
 public class ServerClientThread extends Thread
 {
-  protected String clientName;
-  protected Socket serverClientConnection;
-  protected Server server;
-  public ServerClientThread(String clientName,Socket socket,Server server)
+  private String clientName;
+  private Socket serverClientConnection;
+  private Server server;
+
+  ServerClientThread(Socket socket, Server server)
   {
-    this.clientName = clientName;
+    this.clientName = "UNDEFINED";
     this.serverClientConnection = socket;
     this.server = server;
   }
@@ -18,11 +18,53 @@ public class ServerClientThread extends Thread
   {
     try
     {
-      System.out.println("Connected to " + serverClientConnection.getRemoteSocketAddress());
       DataInputStream in = new DataInputStream(serverClientConnection.getInputStream());
+      DataOutputStream tempOutputStream = new DataOutputStream(serverClientConnection.getOutputStream());
+      //User login loop. Must login before sending messages.
+      Message clientLoginDetails = new Message();
+      ensureLoginLoop:while(true)
+      {
+        clientLoginDetails = Server.parseMesseage(in.readUTF());
+        //Manage user login
+        //Will add to function later
+        //Add login and registration differentiation.
+        switch(clientLoginDetails.getCommand())
+        {
+          case 2:
+            if(server.register(clientLoginDetails)) //Successful registration
+            {
+              tempOutputStream.writeUTF("50|" + clientLoginDetails.getTarget() + "|2");
+              clientName = clientLoginDetails.getTarget();
+              server.addLoggedInClient(clientName,this);
+              System.out.println("Registered new user: " + clientName);     //TODO notify new user about their successful registration
+              break ensureLoginLoop;
+            }
+            else //Registration Unsuccessful
+            {
+              tempOutputStream.writeUTF("50|" + clientLoginDetails.getTarget() + "|3");
+              continue ensureLoginLoop; //Skip because we don't want to create this client
+            }
+          case 3:
+            if(server.login(clientLoginDetails)) //Login registration       TODO notify user about their successful login
+            {
+              tempOutputStream.writeUTF("50|" + clientLoginDetails.getTarget() + "|0");
+              clientName = clientLoginDetails.getTarget();
+              server.addLoggedInClient(clientName,this);
+              System.out.println("Registered new user: " + clientName);
+              break ensureLoginLoop;
+            }
+            else //Login Unsuccessful
+            {
+              tempOutputStream.writeUTF("50|" + clientLoginDetails.getTarget() + "|1");
+              continue ensureLoginLoop; //Skip because we don't want to create this client
+            }
+        }
+
+      }
+      System.out.println("Connected to " + serverClientConnection.getRemoteSocketAddress());
       while(true)
       {
-        String toSend = in.readUTF();
+        String toSend = in.readUTF();                                           //TODO Send user typed input here
         System.out.println("User: @" + clientName + " typed: " + toSend);
         server.send(Server.parseMesseage(toSend),clientName);
         //Ignore this does nothing healthy right now
@@ -37,7 +79,7 @@ public class ServerClientThread extends Thread
     }
   }
 
-  public void sendToSocket(Message msg,String sender)
+  void sendToSocket(Message msg, String sender)
   {
     try
     {
@@ -51,10 +93,9 @@ public class ServerClientThread extends Thread
     }
   }
 
-  //** * * *  * * * **  * *         * * *   * * * * * *     * * * * * * * * *
-  public void setClientName(String clientName) {
+
+  void setClientName(String clientName) {
     this.clientName = clientName;
   }
-  //** * * *  * * * **  * *         * * *   * * * * * *     * * * * * * * * *
 
 }

@@ -1,15 +1,55 @@
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Scanner;
+import java.io.*;
 
 public class PseudoDatabase {
-    private HashMap<String,ArrayList<String>> userData = new HashMap<>(0);
+
+    //Used in database
+    public static HashMap<String,ArrayList<String>> userData = new HashMap<>(0);
     private HashMap<String,ArrayList<String>> groupData = new HashMap<>(0);
-    HashMap<String,ArrayList<String>> pendingData = new HashMap<>(0);   //will use this to save data sent to offline users
+    private HashMap<String,ArrayList<String>> pendingData = new HashMap<>(0);   //will use this to save data sent to offline users
 
+    PseudoDatabase()
+    {
+      try
+      {
+        //Adding users
+        Scanner scUserFile = new Scanner(new File("./resources/users"));
+        while(scUserFile.hasNextLine())
+        {
+          Scanner scLine = new Scanner(scUserFile.nextLine()).useDelimiter("\\|");
+          register(scLine.next(),scLine.next(),true);
+          scLine.close();
+        }
+        scUserFile.close();
 
+        //Giving the users friends.
+        Scanner scFriendsFile = new Scanner(new File("./resources/friends"));
+        while(scFriendsFile.hasNextLine())
+        {
+          Scanner scLine = new Scanner(scFriendsFile.nextLine()).useDelimiter("\\|");
+          String username = scLine.next();
+          Scanner scFriends = new Scanner(scLine.next()).useDelimiter(",");
+          while(scFriends.hasNext())
+          {
+            addFriend(username,scFriends.next(),true);
+          }
+          scLine.close();
+          scFriends.close();
+        }
+        scFriendsFile.close();
+        //Read group data here                      TODO get initialized user profile
 
-    synchronized boolean register(String name, String password)
+      }
+      catch(FileNotFoundException e)
+      {
+        System.out.println("Users database not found");
+      }
+    }
+
+    synchronized boolean register(String name, String password,boolean fromFile)
     {
         if (userData.containsKey(name))
             return false;
@@ -20,6 +60,9 @@ public class PseudoDatabase {
             flag.add(password);
             flag.add("0");
             userData.put(name,flag);
+            if(!fromFile)
+              writeNewUser(name,password);
+            System.out.println("Registered User " + name + " with password " + password);
             return true;
         }
     }
@@ -51,14 +94,14 @@ public class PseudoDatabase {
     }
 
 
-    /**
-     * \TODO Make sure that user is logged on before allowing adding of friends
-     * */
+
     synchronized boolean addFriend(String user, String friend)
     {
-        if (userData.containsKey(friend) && userData.containsKey(user) && userData.get(user).get(1).compareTo("1")==0)
+        if (!isFriend(user,friend) && userData.get(user).get(1).compareTo("1")==0)
         {
             userData.get(user).add(friend);
+            System.out.println(user + " is now friends with " + friend);
+            writeNewFriend();
             return true;
         }
         else
@@ -66,6 +109,34 @@ public class PseudoDatabase {
     }
 
 
+    //Used on startup to setup friends list
+    private synchronized  boolean addFriend(String user,String friend, boolean isServer)
+    {
+      if (userData.containsKey(friend) && userData.containsKey(user))
+      {
+          userData.get(user).add(friend);
+          System.out.println(user + " is now friends with " + friend);
+          return true;
+      }
+      else
+          return false;
+    }
+
+    public synchronized boolean isFriend(String user, String friend)
+    {
+      if(userData.containsKey(friend) && userData.containsKey(user))
+      {
+        if(userData.get(user).contains(friend))
+        {
+          return true;
+        }
+        return false;
+      }
+      else
+      {
+        return false;
+      }
+    }
 
     synchronized ArrayList<String> createGroup(String name, String members, String owner)
     {
@@ -114,6 +185,70 @@ public class PseudoDatabase {
         return string;
     }
 
+
+    private void writeNewUser(String user, String password)
+    {
+      try
+      {
+        FileWriter userFile = new FileWriter("./resources/users",true);//True appends to file
+        BufferedWriter userFileBuffer = new BufferedWriter(userFile); //Use bw because writing to files is expensive;
+        PrintWriter printer = new PrintWriter(userFileBuffer);
+
+        printer.println(user + "|" + password);
+
+        printer.close();
+        userFileBuffer.close();
+        userFile.close();
+      }
+      catch(IOException e)
+      {
+        e.printStackTrace();
+      }
+    }
+
+    private void writeNewFriend()
+    {
+      try
+      {
+        FileWriter userFile = new FileWriter("./resources/friends",false);//false clears file
+        BufferedWriter userFileBuffer = new BufferedWriter(userFile); //Use bw because writing to files is expensive;
+        PrintWriter printer = new PrintWriter(userFileBuffer);
+
+        for(String user : userData.keySet())
+        {
+          String toPrint = user + "|";
+          ArrayList<String> userFriends = userData.get(user);
+          if(userFriends.size() < 3)
+          {
+            continue;
+          }
+          for(int i = 0; i < userFriends.size(); i++)
+          {
+            if(i==0 || i== 1)
+            {
+              continue;
+            }
+            else if(i == userFriends.size()-1)
+            {
+              toPrint += userFriends.get(i);
+            }
+            else
+            {
+              toPrint += userFriends.get(i) + ",";
+            }
+          }
+          printer.println(toPrint);
+        }
+
+        printer.close();
+        userFileBuffer.close();
+        userFile.close();
+      }
+      catch(IOException e)
+      {
+        e.printStackTrace();
+      }
+    }
 
     public HashMap<String, ArrayList<String>> getUserData() {
         return userData;

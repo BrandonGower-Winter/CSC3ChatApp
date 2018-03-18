@@ -12,12 +12,12 @@ public class Server extends Thread
 {
     private ServerSocket serverSocket;
     private HashMap<String,ServerClientThread> clients;
-    private MultiUsers multiUsers = new MultiUsers(); // *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *
+    private MultiUsers multiUsers = new MultiUsers();
 
     public Server(int port) throws IOException
     {
         serverSocket = new ServerSocket(port);
-        clients = new HashMap<String,ServerClientThread>();
+        clients = new HashMap<>();
     }
 
     public void run()
@@ -29,13 +29,7 @@ public class Server extends Thread
                 System.out.println("Waiting for client on port " + serverSocket.getLocalPort());
                 Socket clientConnection = serverSocket.accept();
                 //Will make neater later
-                DataInputStream tempInStream = new DataInputStream(clientConnection.getInputStream());
-                String clientName = tempInStream.readUTF();
-                ServerClientThread clientThread = new ServerClientThread(clientName,clientConnection,this);
-                //Will add duplicate name check later
-                clients.put(clientName,clientThread);
-                System.out.println("Registered new user: " + clientName);
-                clientThread.start();
+                new ServerClientThread(clientConnection,this).start();
             }
             catch(IOException e)
             {
@@ -46,28 +40,38 @@ public class Server extends Thread
         }
     }
 
-    public void send(Message msg,String sender)
+    boolean register(Message msg) //Registers and logs in new user
     {
-        switch (msg.getCommand())// *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *
+        return multiUsers.registration(msg) && multiUsers.login(msg);
+    }
+
+    boolean login(Message msg)
+    {
+        return multiUsers.login(msg);
+    }
+
+    void addLoggedInClient(String name, ServerClientThread thread)
+    {
+      clients.put(name ,thread);
+    }
+
+    void send(Message msg, String sender)
+    {
+        switch (msg.getCommand())
         {
             case 0:
-                if (msg.getTarget().compareTo("all")==0)                                                                //sends update to all clients in the server
-                    new Broadcaster(clients,msg,sender).start();
+                if (msg.getTarget().compareTo("all")==0)    //sends message to all users the sender is friends with.
+                    new Broadcaster(multiUsers,clients,msg,sender,false).start();
+                else if(multiUsers.isFriend(sender,msg.getTarget()))
+                    clients.get(msg.getTarget()).sendToSocket(msg,sender);
                 else
-                    clients.get(msg.getTarget()).sendToSocket(msg,sender);                                              //one to one communication without registration
+                    System.out.println(sender + " attempted to message " + msg.getTarget() + " but they are not friends.");
                 break;
 
             case 1:
                 //file functionality
                 break;
 
-            case 2:
-                multiUsers.registration(msg,sender,clients);                                                                              //registration
-                break;
-
-            case 3:
-                multiUsers.login(msg,clients,sender);
-                break;
             case 4:
                 multiUsers.logout(msg,clients,sender);
                 break;
@@ -88,17 +92,51 @@ public class Server extends Thread
             case 9:
                 multiUsers.groupMessage(msg,clients,sender);
                 break;
-        }                       // *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *
+        }
 
+    }
+
+    private synchronized void serverBroadcast(String messageContent)
+    {
+      Message msg = new Message(0,"all",messageContent);
+      new Broadcaster(multiUsers,clients,msg,"Server",true).start();
     }
 
     public static void main(String[] args)
     {
-        int port = 4444;
+        int port;
+        if(args.length > 1)
+        {
+          port = Integer.parseInt(args[0]);
+        }
+        else
+        {
+          port = 4444;
+        }
         try
         {
             Server s = new Server(port);
-            s.run(); //Intentional
+            s.start();
+            Scanner serverCommands = new Scanner(System.in);
+            serverLifeTimeLoop:while(true)
+            {
+              String command = serverCommands.nextLine();
+              switch(command)
+              {
+                case "broadcast":
+                  System.out.println("Enter broadcast message:");
+                  s.serverBroadcast(serverCommands.nextLine());
+                  break;
+                case "save":
+                  System.out.println("Saving userbase");
+                  //save userbase.
+                  break;
+                case "exit":
+                  System.out.println("Shutting down server...");
+                  //save userbase
+                  break serverLifeTimeLoop;
+              }
+            }
         }
         catch(IOException e)
         {
@@ -108,7 +146,7 @@ public class Server extends Thread
 
     //Possibly Temporary
     //Will add error management later
-    public static Message parseMesseage(String message)
+    static Message parseMesseage(String message)
     {
         Scanner parser = new Scanner(message).useDelimiter("\\|");
         Message msg = new Message(parser.nextInt(),parser.next(),parser.next());

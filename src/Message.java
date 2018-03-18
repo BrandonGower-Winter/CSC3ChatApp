@@ -15,6 +15,11 @@ public class Message
     content = cont;
   }
 
+  public Message()
+  {
+    
+  }
+
   public int getCommand()
   {
     return command;
