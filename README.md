@@ -10,17 +10,17 @@ Code 0: simple communication between 2 clients and if target is "all", a broadca
 
 Code 1: //reserved for file transfers 
 
-Code 2: registering a user to a local pseudo-database 
+Code 2: registering a user to a database
 
     format: 2|<Username>|<Password>
 
 Code 3: login/signin a user
 
-    formart:3|<Username>|<Password>
+    format:3|<Username>|<Password>
 
 COde 4: logout/signout (pending progress)
     
-    formart: 4|<username>|<password>
+    format: 4|<username>|<password>
 
 Code 5: add friend/contact
 
@@ -30,7 +30,7 @@ Code 5: add friend/contact
 Code 6: creating a group
 
     format: 6|<group name>|<username1.username2.username3.username4. ...>
-    (all usernameNs shuold be registered)
+    (all usernameNs should be registered)
 
 
 Code 7: add a person to a group

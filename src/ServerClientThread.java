@@ -36,7 +36,7 @@ public class ServerClientThread extends Thread
               tempOutputStream.writeUTF("50|" + clientLoginDetails.getTarget() + "|2");
               clientName = clientLoginDetails.getTarget();
               server.addLoggedInClient(clientName,this);
-              System.out.println("Registered new user: " + clientName);     //TODO notify new user about their successful registration
+              System.out.println("Registered new user: " + clientName);
               break ensureLoginLoop;
             }
             else //Registration Unsuccessful
@@ -45,7 +45,7 @@ public class ServerClientThread extends Thread
               continue ensureLoginLoop; //Skip because we don't want to create this client
             }
           case 3:
-            if(server.login(clientLoginDetails)) //Login registration       TODO notify user about their successful login
+            if(server.login(clientLoginDetails)) //Login registration
             {
               tempOutputStream.writeUTF("50|" + clientLoginDetails.getTarget() + "|0");
               clientName = clientLoginDetails.getTarget();

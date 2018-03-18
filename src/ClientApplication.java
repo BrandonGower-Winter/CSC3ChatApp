@@ -78,9 +78,7 @@ public class ClientApplication
         System.out.println("Registration Successful!");
       }
       else
-      {
-        System.out.println("Registration Failure! Account Already Exists!!!");
-        clientLoginStatus = 0;
+      { clientLoginStatus = 0;
         return false;
       }
     return true;
@@ -140,6 +138,9 @@ public class ClientApplication
   }
 
   static void message(String target, String text) throws IOException {
-    out.writeUTF("0|"+target+"|"+text);
+    if (target.compareTo("Broadcast")==0)
+      out.writeUTF("0|all|"+text);
+    else
+      out.writeUTF("0|"+target+"|"+text);
   }
 }

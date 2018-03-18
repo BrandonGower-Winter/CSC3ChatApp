@@ -119,7 +119,7 @@ public class Controller1 {
 
 
 
-    //TODO fix disappearing history bug when switching between users and no response from chats tab
+    //TODO bug: no response when selecting chat history
     void switcher(String selected){
 
         selectedUser = selected;
@@ -158,7 +158,7 @@ public class Controller1 {
         {
             ClientApplication.message(selectedUser,sendingArea.getText());
             chatSpace.appendText("\nMe: "+sendingArea.getText());
-            tempHist.replace(selectedUser,sendingArea.getText());
+            tempHist.replace(selectedUser,chatSpace.getText());
             sendingArea.clear();
         }
         setChats();

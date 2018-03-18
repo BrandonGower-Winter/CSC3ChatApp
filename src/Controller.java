@@ -15,8 +15,6 @@ public class Controller {
 
     @FXML void login(ActionEvent event)
     {
-        //TODO have to check with the database whether login credentials are valid
-
         if (Bridge.login(userN.getText(),userPass.getText()))
         {
             try
