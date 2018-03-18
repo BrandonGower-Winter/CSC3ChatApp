@@ -84,6 +84,11 @@ public class ClientApplication
     return true;
   }
 
+  static boolean addFriend(String me, String friend) throws IOException {
+    out.writeUTF("5|"+me+"|"+friend);
+    return true;
+  }
+
 
   public static boolean login(String text1, String text2)
   {

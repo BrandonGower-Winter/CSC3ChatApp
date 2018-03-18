@@ -4,20 +4,16 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 
+import java.io.IOException;
+
 
 public class Controller2 {
 
     @FXML JFXTextField a,b,c,d,e;
     @FXML JFXButton f;
-    @FXML public void AddFriend(ActionEvent event) {
-        if (true)
-        {
-            a.clear();
-        }
-        else
-        {
-            a.clear();
-        }
+    @FXML public void AddFriend(ActionEvent event) throws IOException {
+        ClientApplication.addFriend(Bridge.user,a.getText());//TODO notify user whether the friend is added or not
+        a.clear();//TODO ensure that friend is registered before adding
     }
 
     @FXML public void createFriend(ActionEvent event) {
