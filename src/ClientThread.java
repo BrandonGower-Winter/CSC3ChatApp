@@ -1,13 +1,20 @@
 import java.net.*;
 import java.io.*;
 import javax.swing.JOptionPane;
+import java.util.Scanner;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Base64;
+
 public class ClientThread extends Thread
 {
   private Socket client;
+  private HashMap<String,ArrayList<Networkfile>> filesToWrite;
 
   public ClientThread(Socket client)
   {
     this.client = client;
+    filesToWrite = new HashMap<String,ArrayList<Networkfile>>();
   }
 
   public void run()
@@ -29,7 +36,9 @@ public class ClientThread extends Thread
                 notifyClientLoginStatus(msg);
                 break;
           case 51:
-              if(JOptionPane.showConfirmDialog(null,"@" + msg.getTarget() + " wants to send file: " + msg.getContent(),"File from " + msg.getTarget(),JOptionPane.YES_NO_OPTION)==0)
+              Scanner scFileMessage = new Scanner(msg.getContent()).useDelimiter("%");
+              System.out.println("File permissions: " + msg.getContent());
+              if(JOptionPane.showConfirmDialog(null,"@" + msg.getTarget() + " wants to send file: " + scFileMessage.next() + " ("+scFileMessage.nextInt()+") bytes","File from " + msg.getTarget(),JOptionPane.YES_NO_OPTION)==0)
               {
                 sendFileConfirmation(msg.getTarget(),true);
               }
@@ -39,7 +48,31 @@ public class ClientThread extends Thread
               }
               break;
           case 52:
-              System.out.println("Received" + msg.toString());
+
+              Networkfile toAdd = Networkfile.parseNetworkFile(msg.getContent());
+              if(filesToWrite.containsKey(msg.getTarget()))
+              {
+                filesToWrite.get(msg.getTarget()).add(toAdd);
+              }
+              else
+              {
+                ArrayList<Networkfile> fileBits = new ArrayList<Networkfile>();
+                fileBits.add(toAdd);
+                filesToWrite.put(msg.getTarget(),fileBits);
+              }
+              if(filesToWrite.get(msg.getTarget()).size() == Math.ceil(toAdd.getFileSize()/(double)16000))
+              {
+                //System.out.println("Time to write file on part: " + toAdd.getFilePart());
+                FileOutputStream out = new FileOutputStream(toAdd.getName());
+                for(Networkfile filebit : filesToWrite.get(msg.getTarget()))
+                {
+                  byte[] b = Base64.getDecoder().decode(filebit.getContent());
+                  out.write(b);
+                }
+                out.close();
+                filesToWrite.remove(msg.getTarget());
+              }
+
               break;
         }
         //Ignore this.

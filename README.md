@@ -56,6 +56,10 @@ Code 10: confirm file send;
       0: yes
       1: no
 
+Code 11: Send file bit:
+
+    format 11|<target>|<file bit>
+
 Code 50: Confirm user login status
 
   format: 50|<user>|<login status>
@@ -71,4 +75,4 @@ Code 51: Send user file status
   format: 51|<Sender>|<file name>
 
 Code 52: Send user file
-  format 52|sender|<filename>%<filedata>
+  format 52|sender|<filename>%<file size>%<file part>%<filedata>

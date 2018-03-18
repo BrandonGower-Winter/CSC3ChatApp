@@ -128,6 +128,8 @@ public class Server extends Thread
                 else
                   clients.get(sender).sendFile(msg.getTarget(),false);
                   //System.out.println("Sender is denying " + msg.getTarget() + "'s file");
+            case 11: //Add a bit of the file to the file buffer
+                clients.get(msg.getTarget()).addBitToFileList(sender,msg);
                 break;
         }                       // *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *
 

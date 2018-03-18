@@ -1,6 +1,7 @@
 import java.net.*;
 import java.io.*;
 import java.util.HashMap;
+import java.util.ArrayList;
 
 public class ServerClientThread extends Thread
 {
@@ -8,14 +9,14 @@ public class ServerClientThread extends Thread
   protected Socket serverClientConnection;
   protected Server server;
 
-  private HashMap<String,Networkfile> fileBuffer;
+  private HashMap<String,ArrayList<String>> fileBuffer;
 
   public ServerClientThread(Socket socket,Server server)
   {
     this.clientName = "UNDEFINED";
     this.serverClientConnection = socket;
     this.server = server;
-    fileBuffer = new HashMap<String,Networkfile>();
+    fileBuffer = new HashMap<String,ArrayList<String>>();
   }
 
   public void run()
@@ -101,11 +102,11 @@ public class ServerClientThread extends Thread
   {
     try
     {
-      System.out.println("Sender in permission is " + sender);
-      fileBuffer.put(sender,Networkfile.parseNetworkFile(msg.getContent())); //Means user can only send one file at a time. Maybe we can change later?
+      //System.out.println("Sender in permission is " + sender);
+      //fileBuffer.put(sender,Networkfile.parseNetworkFile(msg.getContent())); //Means user can only send one file at a time. Maybe we can change later?
       DataOutputStream out = new DataOutputStream(serverClientConnection.getOutputStream());
       //System.out.println(fileBuffer.get(sender).toString());
-      String toSend = "51|"+ sender + "|" + fileBuffer.get(sender).getName();
+      String toSend = "51|"+ sender + "|" + msg.getContent();
       out.writeUTF(toSend);
     }
     catch(IOException e)
@@ -122,8 +123,12 @@ public class ServerClientThread extends Thread
       if(sendFile)
       {
         DataOutputStream out = new DataOutputStream(serverClientConnection.getOutputStream());
-        String toSend = "52|"+ sender + "|" + fileBuffer.get(sender).toString();
-        out.writeUTF(toSend);
+        for(String bit : fileBuffer.get(sender))
+        {
+          String toSend = "52|"+ sender + "|" + bit;
+          out.writeUTF(toSend);
+        }
+        fileBuffer.remove(sender);
       }
       else
       {
@@ -133,6 +138,21 @@ public class ServerClientThread extends Thread
     catch(IOException e)
     {
       e.printStackTrace();
+    }
+  }
+
+  public void addBitToFileList(String sender, Message msg)
+  {
+    //Add file to hashmap that has an array list of strings
+    if(fileBuffer.containsKey(sender))
+    {
+      fileBuffer.get(sender).add(msg.getContent());
+    }
+    else
+    {
+      ArrayList<String> fileBits = new ArrayList<String>();
+      fileBits.add(msg.getContent());
+      fileBuffer.put(sender,fileBits);
     }
   }
 

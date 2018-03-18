@@ -3,6 +3,7 @@ import java.io.*;
 import java.util.Scanner;
 import java.util.Arrays;
 import java.nio.file.Files;
+import java.util.Base64;
 
 public class ClientApplication
 {
@@ -51,14 +52,30 @@ public class ClientApplication
         Message toSend = Server.parseMesseage(input.nextLine());
         switch(toSend.getCommand())
         {
-          case 1:
+          case 11:
             File f = new File(toSend.getContent());
             byte[] fileBytes = Files.readAllBytes(f.toPath());
-            String fileData = f.getName() + "%";
-
-            fileData += new String(fileBytes,"UTF-8");
-            toSend.setContent(fileData);
-            out.writeUTF(toSend.toString());
+            System.out.println("Sending file: " + fileBytes.length);
+            int partsToSend = (int)Math.ceil(fileBytes.length/(double)16000);
+            System.out.println("File will be sent in " + partsToSend + " parts");
+            for(int i = 0; i < partsToSend; i++)
+            {
+              String fileData = f.getName() + "%" + fileBytes.length + "%" + (i+1) + "%";
+              if(i+1 != partsToSend)
+              {
+                //fileData+= Arrays.copyOfRange(fileBytes,16000*(i),16000*(i+1)).length;
+                fileData += Base64.getEncoder().encodeToString(Arrays.copyOfRange(fileBytes,16000*(i),16000*(i+1)));
+              }
+              else
+              {
+                //fileData+= Arrays.copyOfRange(fileBytes,16000*(i),fileBytes.length).length;
+                fileData += Base64.getEncoder().encodeToString(Arrays.copyOfRange(fileBytes,16000*(i),fileBytes.length));
+              }
+              //System.out.println("Data being sent:\n" + fileData);
+              toSend.setContent(fileData);
+              out.writeUTF(toSend.toString());
+            }
+            out.writeUTF("1|"+toSend.getTarget()+"|"+f.getName()+"%"+fileBytes.length);
             break;
           default:
             out.writeUTF(toSend.toString());
