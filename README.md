@@ -5,10 +5,10 @@ Guest logins available:
   Username: guest1, guest2, guest3
   Password: 123, 456, 789
 
-Message Format: <command>|<target>|<content>
+Message Format: \<command\>| \<target\>| \<content\>
 
-Users File Format: <username>|<password>
-Friends File Format: <username>|<friend1>,<friend2>...<friendN>
+    Users File Format: <username>|<password>
+    Friends File Format: <username>|<friend1>,<friend2>...<friendN>
 
 Code 0: simple communication between 2 clients and if target is "all", a broadcast is sent to all live clients
 
@@ -22,11 +22,11 @@ Code 2: registering a user to a local pseudo-database
 
 Code 3: login/signin a user
 
-    formart:3|<Username>|<Password>
+    format:3|<Username>|<Password>
 
 COde 4: logout/signout (pending progress)
 
-    formart: 4|<username>|<password>
+    format: 4|<username>|<password>
 
 Code 5: add friend/contact
 
@@ -62,9 +62,9 @@ Code 11: Send file bit:
 
 Code 50: Confirm user login status
 
-  format: 50|<user>|<login status>
+    format: 50|<user>|<login status>
 
-  login status:
+    login status:
               0: Login Successful
               1: Login Unsuccessful
               2: Registration Successful
@@ -72,7 +72,8 @@ Code 50: Confirm user login status
 
 Code 51: Send user file status
 
-  format: 51|<Sender>|<file name>
+    format: 51|<Sender>|<file name>
 
 Code 52: Send user file
-  format 52|sender|<filename>%<file size>%<file part>%<filedata>
+    
+    format 52|sender|<filename>%<file size>%<file part>%<filedata>
