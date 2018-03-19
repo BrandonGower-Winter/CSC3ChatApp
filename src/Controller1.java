@@ -44,11 +44,6 @@ public class Controller1 {
             tempHist.put(string,"");
         }
 
-        //remove
-        for (int x = 0; x< 3; x++){
-            groupList.getItems().add(new Label("Group"+x));
-        }
-
 
 
 
@@ -117,9 +112,6 @@ public class Controller1 {
         }
     }
 
-
-
-    //TODO bug: no response when selecting chat history
     void switcher(String selected){
 
         selectedUser = selected;
@@ -171,5 +163,10 @@ public class Controller1 {
         button.setStyle("-fx-background-color: red;");
         ((JFXTextArea)(Main.stage.getScene().getRoot().lookup("#chatSpace"))).appendText(text1);
         tempHist.replace(text,tempHist.get(text)+text1);
+    }
+
+
+    public static void groupCreationNotification(String groupname)
+    {//TODO add group name to gui
     }
 }

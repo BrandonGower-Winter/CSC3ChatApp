@@ -27,10 +27,11 @@ Code 5: add friend/contact
     format: 5|<your current logged in username>|<friend's username>
     NB: Friend's username should be a registered first
 
-Code 6: creating a group
+Code 6: creating a group (users should be online)
 
     format: 6|<group name>|<username1.username2.username3.username4. ...>
-    (all usernameNs should be registered)
+    GUI format: <group name>|<username1.username2.username3.username4. ...>
+   
 
 
 Code 7: add a person to a group

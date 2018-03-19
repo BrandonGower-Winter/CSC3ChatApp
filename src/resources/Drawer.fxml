@@ -19,7 +19,7 @@
       <Region prefHeight="18.0" prefWidth="249.0" />
       <JFXTextField fx:id="a" alignment="CENTER" focusColor="RED" onAction="#AddFriend" prefHeight="37.0" prefWidth="249.0" promptText="Add Friend" style="-fx-prompt-text-fill: white; -fx-text-fill: white;" />
       <Region layoutX="10.0" layoutY="10.0" prefHeight="20.0" prefWidth="249.0" />
-      <JFXTextField fx:id="b" alignment="CENTER" focusColor="RED" onAction="#createFriend" prefHeight="37.0" prefWidth="249.0" promptText="CREATE GROUP" style="-fx-prompt-text-fill: white; -fx-text-fill: white;" />
+      <JFXTextField fx:id="b" alignment="CENTER" focusColor="RED" onAction="#createGroup" prefHeight="37.0" prefWidth="249.0" promptText="CREATE GROUP" style="-fx-prompt-text-fill: white; -fx-text-fill: white;" />
       <Region layoutX="10.0" layoutY="65.0" prefHeight="20.0" prefWidth="249.0" />
       <JFXTextField fx:id="c" alignment="CENTER" focusColor="RED" onAction="#addFriendToGroup" prefHeight="37.0" prefWidth="249.0" promptText="Add Friend to Group" style="-fx-prompt-text-fill: white; -fx-text-fill: white;" />
       <Region layoutX="10.0" layoutY="65.0" prefHeight="20.0" prefWidth="249.0" />

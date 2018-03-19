@@ -16,15 +16,9 @@ public class Controller2 {
         a.clear();//TODO ensure that friend is registered before adding
     }
 
-    @FXML public void createFriend(ActionEvent event) {
-        if (true)
-        {
-            b.clear();
-        }
-        else
-        {
-            b.clear();
-        }
+    @FXML public void createGroup(ActionEvent event) throws IOException {
+        ClientApplication.createGroup(b.getText(),Bridge.user);
+        b.clear();
     }
 
     @FXML public void addFriendToGroup(ActionEvent event) {
@@ -64,4 +58,5 @@ public class Controller2 {
         //TODO Save data and notify other clients that user has gone offline
         Platform.exit();
     }
+
 }

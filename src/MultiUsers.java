@@ -43,11 +43,14 @@ class MultiUsers extends Thread
 
     //TODO Ensure that all users in a group are notfied that they have been added on a new group
     void createGroup(Message msg, HashMap<String, ServerClientThread> clients, String sender) {
-        ArrayList<String> res = database.createGroup(msg.getTarget(),msg.getContent(), sender);
+       ArrayList<String> res = database.createGroup(msg.getTarget(),msg.getContent(), sender);
         StringBuilder string = new StringBuilder();
         for (String s: res)
             string.append(s).append(", ");
-        clients.get(sender).sendToSocket(new Message(6,sender,"GROUP: "+msg.getTarget()+" HAS BEEN CREATED BY "+sender+" AND HAS THE FOLLOWING MEMBERS: "+string),sender);
+        System.out.println("GROUP: "+msg.getTarget()+" HAS BEEN CREATED BY "+sender+" AND HAS THE FOLLOWING MEMBERS: "+string);
+        Controller1.groupCreationNotification(msg.getTarget());
+        for (String s: database.getUserData().get(msg.getTarget()))
+            clients.get(msg.getTarget()).sendToSocket(new Message(0,msg.getTarget(),s+" joined "),sender);
     }
 
     void addMem(Message msg, HashMap<String, ServerClientThread> clients, String sender) {
@@ -62,10 +65,7 @@ class MultiUsers extends Thread
     }
 
     void groupMessage(Message msg, HashMap<String, ServerClientThread> clients, String sender) {
-        new Thread(new Runnable()
-        {   @Override
-        public void run()
-        {
+        new Thread(() -> {
             for (String string: database.getGroupData().get(msg.getTarget()))
             {
                 for (String client: clients.keySet()){
@@ -73,7 +73,6 @@ class MultiUsers extends Thread
                         clients.get(client).sendToSocket(msg,sender);
                 }
             }
-
-        }}).start();
+        }).start();
     }
 }
