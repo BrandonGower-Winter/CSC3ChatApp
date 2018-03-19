@@ -1,6 +1,5 @@
 import com.jfoenix.controls.*;
 import com.jfoenix.transitions.hamburger.HamburgerSlideCloseTransition;
-import com.sun.xml.internal.ws.server.sei.MessageFiller;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
@@ -9,10 +8,11 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
-import java.awt.*;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Scanner;
 
 public class Controller1 {
     @FXML private JFXTabPane tabPane;
@@ -27,7 +27,7 @@ public class Controller1 {
     private JFXListView<Label> chatsList = new JFXListView<>();
     private JFXListView<Label> contactsList = new JFXListView<>();
 
-    private static HashMap<String, String> tempHist = new HashMap<>(0);
+    static HashMap<String, String> tempHist = new HashMap<>(0);
 
 
     String selectedUser="";
@@ -49,6 +49,8 @@ public class Controller1 {
 
         groups = new Tab("Groups");
         groups.setContent(groupList);
+
+        groupList.setId("groupFXMLelement");
 
         chats = new Tab("Chats");
         chats.setContent(chatsList);
@@ -104,7 +106,7 @@ public class Controller1 {
         if (drawer.isShown())
         {
             drawer.close();
-            hbox.setPrefWidth(660);//not working
+            hbox.setPrefWidth(660);//bug: not responding
         }
         else
         {
@@ -140,7 +142,36 @@ public class Controller1 {
                 if (!flag)
                     chatsList.getItems().add(new Label(key));
             }
+        }
+    }
 
+
+    @FXML void refresh()
+    {
+
+        //handles friend additions
+        try {
+            Scanner scanner = new Scanner(new FileInputStream("resources/friends"));
+            while (scanner.hasNextLine()){
+                String string = scanner.nextLine();
+                if (string.substring(0,string.indexOf("|")).compareTo(Bridge.user)==0)
+                {
+                    string = string.substring(string.indexOf("|")+1);
+                    String[] strings = string.split(",");
+                    for (String s: strings)
+                    {
+                        if (!tempHist.containsKey(s))
+                        {
+                            tempHist.put(s,"");
+                            contactsList.getItems().add(new Label(s));
+                            headerInfo.setStyle("-fx-background-color: green");
+                            headerInfo.setText("Added new friends");
+                        }
+                    }
+                }
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
         }
     }
 
@@ -157,16 +188,16 @@ public class Controller1 {
     }
 
 
-    public static void receiveMessage(String text, String text1)
+    static void receiveMessage(String text, String text1)
     {
         JFXButton button = ((JFXButton)(Main.stage.getScene().getRoot().lookup("#headerInfo")));
         button.setStyle("-fx-background-color: red;");
-        ((JFXTextArea)(Main.stage.getScene().getRoot().lookup("#chatSpace"))).appendText(text1);
         tempHist.replace(text,tempHist.get(text)+text1);
     }
 
 
     public static void groupCreationNotification(String groupname)
     {//TODO add group name to gui
+
     }
 }

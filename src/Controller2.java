@@ -12,8 +12,8 @@ public class Controller2 {
     @FXML JFXTextField a,b,c,d,e;
     @FXML JFXButton f;
     @FXML public void AddFriend(ActionEvent event) throws IOException {
-        ClientApplication.addFriend(Bridge.user,a.getText());//TODO notify user whether the friend is added or not
-        a.clear();//TODO ensure that friend is registered before adding
+        ClientApplication.addFriend(Bridge.user,a.getText());
+        a.clear();
     }
 
     @FXML public void createGroup(ActionEvent event) throws IOException {

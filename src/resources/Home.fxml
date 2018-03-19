@@ -20,7 +20,7 @@
             <Region maxHeight="15.0" minHeight="15.0" prefHeight="12.0" prefWidth="675.0" />
             <HBox fx:id="hbox" maxWidth="660.0" prefWidth="660.0">
                <children>
-                  <JFXButton fx:id="headerInfo" prefHeight="43.0" prefWidth="675.0" style="-fx-background-color: orange; -fx-border-radius: 50%;" text="User: &quot;John Doe&quot; is offline (last seen 02\64\3030)" textAlignment="CENTER" />
+                  <JFXButton fx:id="headerInfo" onAction="#refresh" prefHeight="43.0" prefWidth="675.0" style="-fx-background-color: orange; -fx-border-radius: 50%;" text="User: &quot;John Doe&quot; is offline (last seen 02\64\3030)" textAlignment="CENTER" />
                   <JFXHamburger fx:id="hamburger" maxWidth="40.0" minWidth="40.0" prefHeight="43.0" prefWidth="40.0" HBox.hgrow="NEVER" />
                </children>
             </HBox>

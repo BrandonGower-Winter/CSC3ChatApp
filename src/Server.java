@@ -68,10 +68,6 @@ public class Server extends Thread
                     System.out.println(sender + " attempted to message " + msg.getTarget() + " but they are not friends.");
                 break;
 
-            case 1:
-                //file functionality
-                break;
-
             case 4:
                 multiUsers.logout(msg,clients,sender);
                 break;

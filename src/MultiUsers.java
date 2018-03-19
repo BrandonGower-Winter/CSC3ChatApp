@@ -29,10 +29,7 @@ class MultiUsers extends Thread
 
     synchronized void addFriend(Message msg, HashMap<String, ServerClientThread> clients, String sender)
     {
-        if (database.addFriend(msg.getTarget(),msg.getContent()))
-            clients.get(sender).sendToSocket(new Message(5,sender,"SUCCESSFULLY ADDED: "+msg.getContent()+" AS YOUR FRIEND"),sender);
-        else
-            clients.get(sender).sendToSocket(new Message(5,sender,msg.getContent()+" DOES NOT EXIST OR INVALID INPUT\nREGISTER THE CONTACT FIRST."),sender);
+        database.addFriend(msg.getTarget(),msg.getContent());
     }
 
 
