@@ -184,13 +184,14 @@ public class PseudoDatabase {
 
 
 
-    synchronized boolean addMem(String groupName, String owner, String mem) throws IOException {
+    synchronized String[] addMem(String groupName, String owner, String mem) throws IOException {
 
         Scanner scanner = new Scanner(new FileInputStream("./resources/groups"));
 
         boolean bool = false;
         int pos = 0;
         int count =0;
+        String[] res = null;
         ArrayList<String> list = new ArrayList<>(0);
         while (scanner.hasNextLine())
         {
@@ -202,6 +203,9 @@ public class PseudoDatabase {
                     s+=mem+",";
                     bool = true;
                     System.out.println("group exists");
+                    String flag = s.substring(s.indexOf("|")+1);
+                    res = flag.split(",");
+
                 }
             }
             list.add(s);
@@ -226,7 +230,7 @@ public class PseudoDatabase {
 
         }
 
-        return true;
+        return res;
     }
 
 
