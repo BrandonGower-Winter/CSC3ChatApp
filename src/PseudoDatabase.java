@@ -143,12 +143,14 @@ public class PseudoDatabase {
         if (groupData.containsKey(name))
             return new ArrayList<String>(Collections.singletonList("NO MEMBERS!"));
         else {
-            String[] strings = members.split("\\.");
+            System.out.println("members: "+members);
+            String[] strings = members.split(",");
             ArrayList<String> flag = new ArrayList<>(0);
             flag.add(owner);
-            for (String s: strings)
+            for (String s: strings){
                 if (userData.get(owner).contains(s))
                     flag.add(s);
+            }
             groupData.put(name,flag);
             return flag;
         }

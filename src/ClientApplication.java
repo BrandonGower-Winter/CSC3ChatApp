@@ -92,7 +92,7 @@ public class ClientApplication
   static boolean createGroup(String GroupName,String sender) throws IOException {
     String temp = GroupName.substring(GroupName.indexOf("|")+1);
     GroupName = GroupName.substring(0,GroupName.indexOf("|"));
-    out.writeUTF("6|"+GroupName+"|"+sender+","+temp);//TODO ensure that
+    out.writeUTF("6|*"+GroupName+"|"+sender+","+temp);//TODO ensure that
     return true;
   }
 

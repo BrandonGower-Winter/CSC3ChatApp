@@ -173,6 +173,31 @@ public class Controller1 {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
+
+
+
+        //handles group refreshes
+        for (String string: tempHist.keySet())
+        {
+            if (string.substring(0,1).compareTo("*")==0)
+            {
+                boolean Nomatch = true;
+                for (Label label: groupList.getItems())
+                {
+                    if (label.getText().compareTo(string.substring(1))==0)
+                    {
+                        Nomatch = false;
+                    }
+                }
+
+                if (Nomatch)
+                {
+                    groupList.getItems().add(new Label(string.substring(1)));
+                }
+            }
+        }
+
+        setChats();
     }
 
 
@@ -192,12 +217,26 @@ public class Controller1 {
     {
         JFXButton button = ((JFXButton)(Main.stage.getScene().getRoot().lookup("#headerInfo")));
         button.setStyle("-fx-background-color: red;");
-        tempHist.replace(text,tempHist.get(text)+text1);
+        if (tempHist.containsKey(text))
+        {
+            tempHist.replace(text,tempHist.get(text)+text1);
+        }
+
+
+        if (text.substring(0,1).compareTo("*")==0)
+        {
+            System.out.println(text1);
+            button.setStyle("-fx-background-color: brown;");
+            if (!tempHist.containsKey("*"+text1))
+            {
+                tempHist.put((text),text1);
+            }
+        }
     }
 
 
     public static void groupCreationNotification(String groupname)
-    {//TODO add group name to gui
+    {
 
     }
 }

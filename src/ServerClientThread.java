@@ -64,7 +64,7 @@ public class ServerClientThread extends Thread
       System.out.println("Connected to " + serverClientConnection.getRemoteSocketAddress());
       while(true)
       {
-        String toSend = in.readUTF();                                           //TODO Send user typed input here
+        String toSend = in.readUTF();                                           
         System.out.println("User: @" + clientName + " typed: " + toSend);
         server.send(Server.parseMesseage(toSend),clientName);
         //Ignore this does nothing healthy right now

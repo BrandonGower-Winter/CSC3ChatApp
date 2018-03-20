@@ -38,16 +38,16 @@ class MultiUsers extends Thread
       return database.isFriend(user,friend);
     }
 
-    //TODO Ensure that all users in a group are notfied that they have been added on a new group
+
     void createGroup(Message msg, HashMap<String, ServerClientThread> clients, String sender) {
        ArrayList<String> res = database.createGroup(msg.getTarget(),msg.getContent(), sender);
         StringBuilder string = new StringBuilder();
         for (String s: res)
             string.append(s).append(", ");
         System.out.println("GROUP: "+msg.getTarget()+" HAS BEEN CREATED BY "+sender+" AND HAS THE FOLLOWING MEMBERS: "+string);
-        Controller1.groupCreationNotification(msg.getTarget());
-        for (String s: database.getUserData().get(msg.getTarget()))
-            clients.get(msg.getTarget()).sendToSocket(new Message(0,msg.getTarget(),s+" joined "),sender);
+
+        for (String s: res)
+            clients.get(s).sendToSocket(new Message(0,s,"GROUP: "+msg.getTarget()+" HAS BEEN CREATED BY "+sender+" AND HAS THE FOLLOWING MEMBERS: "+string),msg.getTarget());
     }
 
     void addMem(Message msg, HashMap<String, ServerClientThread> clients, String sender) {

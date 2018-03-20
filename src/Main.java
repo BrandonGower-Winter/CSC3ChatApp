@@ -17,6 +17,7 @@ public class Main extends Application
         Parent root = FXMLLoader.load(getClass().getResource("resources/login.fxml"));
         primaryStage.setScene(new Scene(root));
         primaryStage.show();
+        primaryStage.setResizable(false);
         stage = primaryStage;
     }
 
