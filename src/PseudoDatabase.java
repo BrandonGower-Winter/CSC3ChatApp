@@ -138,44 +138,43 @@ public class PseudoDatabase {
     }
 
     synchronized ArrayList<String> createGroup(String name, String members, String owner) throws IOException {
-        if (groupData.containsKey(name))
-            return new ArrayList<String>(Collections.singletonList("NO MEMBERS!"));
-        else {
-            System.out.println("members: "+members);
-            String[] strings = members.split(",");
-            ArrayList<String> flag = new ArrayList<>(0);
-            flag.add(owner);
-            for (String s: strings){
-                if (userData.get(owner).contains(s))
-                    flag.add(s);
-            }
+        Scanner scanner = new Scanner(new FileInputStream("./resources/groups"));
 
-            boolean bool = true;
-            Scanner scanner = new Scanner(new FileInputStream("./resources/groups"));
-            while (scanner.hasNextLine())
+        while (scanner.hasNextLine())
+        {
+            String s = scanner.nextLine();
+            if (s.substring(0,s.indexOf("|")).compareTo(name)==0)
             {
-                String s = scanner.nextLine();
-                if (s.substring(0,s.indexOf("|")).compareTo(name)==0)
-                {
-                    System.out.println("group already exists");
-                    bool = false;
-                    break;
-                }
+                System.out.println("group already exists");
+                return new ArrayList<>(0);
             }
-            if (bool)
-            {
-                FileWriter userFile = new FileWriter("./resources/groups",true);//True appends to file
-                BufferedWriter userFileBuffer = new BufferedWriter(userFile);
-                PrintWriter printer = new PrintWriter(userFileBuffer);
-                printer.println(name + "|" + members);
-                printer.close();
-                userFileBuffer.close();
-                userFile.close();
-            }
-
-
-            return flag;
         }
+
+
+        System.out.println("members: "+members);
+        String[] strings = members.split(",");
+        ArrayList<String> flag = new ArrayList<>(0);
+        flag.add(owner);
+        String mem = owner+",";
+        for (String s: strings){
+            if (userData.get(owner).contains(s)) {
+                flag.add(s);
+                mem+=s;
+            }
+        }
+
+        FileWriter userFile = new FileWriter("./resources/groups",true);//True appends to file
+        BufferedWriter userFileBuffer = new BufferedWriter(userFile);
+        PrintWriter printer = new PrintWriter(userFileBuffer);
+        printer.println(name + "|" + mem);
+        printer.close();
+        userFileBuffer.close();
+        userFile.close();
+
+
+
+        return flag;
+
     }
 
 

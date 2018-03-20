@@ -42,20 +42,21 @@ class MultiUsers extends Thread
 
     synchronized void createGroup(Message msg, HashMap<String, ServerClientThread> clients, String sender) throws IOException {
        ArrayList<String> res = database.createGroup(msg.getTarget(),msg.getContent(), sender);
-       if (res.get(0).compareTo("NO MEMBERS!")!=0)
+
+       if (res.size()!=0)
        {
            StringBuilder string = new StringBuilder();
            for (String s: res)
                string.append(s).append(", ");
            System.out.println("GROUP: "+msg.getTarget()+" HAS BEEN CREATED BY "+sender+" AND HAS THE FOLLOWING MEMBERS: "+string);
-
            for (String s: res)
                if (clients.containsKey(s))
                    clients.get(s).sendToSocket(new Message(0,s,"GROUP: "+msg.getTarget()+" HAS BEEN CREATED BY "+sender+" AND HAS THE FOLLOWING MEMBERS: "+string),msg.getTarget());
        }
-
-
     }
+
+
+
 
     synchronized void addMem(Message msg, HashMap<String, ServerClientThread> clients, String sender) {
         database.addMem(msg.getTarget(),sender,msg.getContent());
