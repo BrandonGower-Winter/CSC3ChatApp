@@ -77,7 +77,11 @@ public class Server extends Thread
                 break;
 
             case 6:
-                multiUsers.createGroup(msg,clients,sender);
+                try {
+                    multiUsers.createGroup(msg,clients,sender);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 break;
             case 7:
                 multiUsers.addMem(msg,clients,sender);

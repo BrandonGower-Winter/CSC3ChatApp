@@ -1,3 +1,4 @@
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -39,29 +40,32 @@ class MultiUsers extends Thread
     }
 
 
-    void createGroup(Message msg, HashMap<String, ServerClientThread> clients, String sender) {
+    synchronized void createGroup(Message msg, HashMap<String, ServerClientThread> clients, String sender) throws IOException {
        ArrayList<String> res = database.createGroup(msg.getTarget(),msg.getContent(), sender);
-        StringBuilder string = new StringBuilder();
-        for (String s: res)
-            string.append(s).append(", ");
-        System.out.println("GROUP: "+msg.getTarget()+" HAS BEEN CREATED BY "+sender+" AND HAS THE FOLLOWING MEMBERS: "+string);
+       if (res.get(0).compareTo("NO MEMBERS!")!=0)
+       {
+           StringBuilder string = new StringBuilder();
+           for (String s: res)
+               string.append(s).append(", ");
+           System.out.println("GROUP: "+msg.getTarget()+" HAS BEEN CREATED BY "+sender+" AND HAS THE FOLLOWING MEMBERS: "+string);
 
-        for (String s: res)
-            clients.get(s).sendToSocket(new Message(0,s,"GROUP: "+msg.getTarget()+" HAS BEEN CREATED BY "+sender+" AND HAS THE FOLLOWING MEMBERS: "+string),msg.getTarget());
+           for (String s: res)
+               if (clients.containsKey(s))
+                   clients.get(s).sendToSocket(new Message(0,s,"GROUP: "+msg.getTarget()+" HAS BEEN CREATED BY "+sender+" AND HAS THE FOLLOWING MEMBERS: "+string),msg.getTarget());
+       }
+
+
     }
 
-    void addMem(Message msg, HashMap<String, ServerClientThread> clients, String sender) {
-        if (database.addMem(msg.getTarget(),sender,msg.getContent()))
-            clients.get(sender).sendToSocket(new Message(5,sender,"SUCCESSFULLY ADDED: "+msg.getContent()+" AS A MEMBER OF GROUP: "+msg.getTarget()),sender);
-        else
-            clients.get(sender).sendToSocket(new Message(5,sender,"FAILED TO ADD: "+msg.getContent()+" AS A MEMBER OF GROUP: "+msg.getTarget()),sender);
+    synchronized void addMem(Message msg, HashMap<String, ServerClientThread> clients, String sender) {
+        database.addMem(msg.getTarget(),sender,msg.getContent());
     }
 
-    void printStatus(String sender, HashMap<String, ServerClientThread> clients) {
+    synchronized void printStatus(String sender, HashMap<String, ServerClientThread> clients) {
         clients.get(sender).sendToSocket(new Message(8,"",database.printStatus(sender)),sender);
     }
 
-    void groupMessage(Message msg, HashMap<String, ServerClientThread> clients, String sender) {
+    synchronized void groupMessage(Message msg, HashMap<String, ServerClientThread> clients, String sender) {
         new Thread(() -> {
             for (String string: database.getGroupData().get(msg.getTarget()))
             {

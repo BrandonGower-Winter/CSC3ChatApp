@@ -184,7 +184,7 @@ public class Controller1 {
                 boolean Nomatch = true;
                 for (Label label: groupList.getItems())
                 {
-                    if (label.getText().compareTo(string.substring(1))==0)
+                    if (label.getText().compareTo(string)==0)
                     {
                         Nomatch = false;
                     }
@@ -192,10 +192,11 @@ public class Controller1 {
 
                 if (Nomatch)
                 {
-                    groupList.getItems().add(new Label(string.substring(1)));
+                    groupList.getItems().add(new Label(string));
                 }
             }
         }
+
 
         setChats();
     }
@@ -234,9 +235,8 @@ public class Controller1 {
         }
     }
 
-
-    public static void groupCreationNotification(String groupname)
-    {
-
+    public synchronized static void groupNotific(String groupName, String mem) {
+        System.out.println(tempHist.keySet());
+        System.out.println(groupName+"  added: "+mem);
     }
 }

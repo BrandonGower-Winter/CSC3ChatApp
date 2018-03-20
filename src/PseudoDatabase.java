@@ -9,7 +9,6 @@ public class PseudoDatabase {
     //Used in database
     public static HashMap<String,ArrayList<String>> userData = new HashMap<>(0);
     private HashMap<String,ArrayList<String>> groupData = new HashMap<>(0);
-    private HashMap<String,ArrayList<String>> pendingData = new HashMap<>(0);   //will use this to save data sent to offline users
 
     PseudoDatabase()
     {
@@ -138,8 +137,7 @@ public class PseudoDatabase {
       }
     }
 
-    synchronized ArrayList<String> createGroup(String name, String members, String owner)
-    {
+    synchronized ArrayList<String> createGroup(String name, String members, String owner) throws IOException {
         if (groupData.containsKey(name))
             return new ArrayList<String>(Collections.singletonList("NO MEMBERS!"));
         else {
@@ -151,7 +149,31 @@ public class PseudoDatabase {
                 if (userData.get(owner).contains(s))
                     flag.add(s);
             }
-            groupData.put(name,flag);
+
+            boolean bool = true;
+            Scanner scanner = new Scanner(new FileInputStream("./resources/groups"));
+            while (scanner.hasNextLine())
+            {
+                String s = scanner.nextLine();
+                if (s.substring(0,s.indexOf("|")).compareTo(name)==0)
+                {
+                    System.out.println("group already exists");
+                    bool = false;
+                    break;
+                }
+            }
+            if (bool)
+            {
+                FileWriter userFile = new FileWriter("./resources/groups",true);//True appends to file
+                BufferedWriter userFileBuffer = new BufferedWriter(userFile);
+                PrintWriter printer = new PrintWriter(userFileBuffer);
+                printer.println(name + "|" + members);
+                printer.close();
+                userFileBuffer.close();
+                userFile.close();
+            }
+
+
             return flag;
         }
     }
@@ -160,9 +182,12 @@ public class PseudoDatabase {
 
     synchronized boolean addMem(String groupName, String owner, String mem)
     {
-        if (groupData.containsKey(groupName) && groupData.get(groupName).get(0).compareTo(owner)==0 && userData.get(owner).contains(mem))
+        if (groupData.containsKey(groupName) && userData.get(owner).contains(mem))
         {
+            System.out.println("Successfully added: "+mem+ "to group: "+groupName);
             groupData.get(groupName).add(mem);
+            Controller1.groupNotific(groupName,mem);
+
             return true;
         }
         else
@@ -258,9 +283,5 @@ public class PseudoDatabase {
 
     public HashMap<String, ArrayList<String>> getGroupData() {
         return groupData;
-    }
-
-    public HashMap<String, ArrayList<String>> getPendingData() {
-        return pendingData;
     }
 }

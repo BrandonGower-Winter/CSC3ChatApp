@@ -3,6 +3,8 @@ import javafx.application.Application;
 class Bridge
 {
     public static String user ="";
+
+    public static String flag ="";
     static void runGUI(){
         new Thread(() -> Application.launch(Main.class)).start();
     }
@@ -16,26 +18,4 @@ class Bridge
         user = text;
         return ClientApplication.registration(text,text1);
     }
-
-    //TODO get user groups
-
-
-    //TODO get status on whether the user is online or offline
-
-
-    //TODO send file to user
-
-
-    //TODO add a friend
-
-    //TODO create a group
-
-
-    //TODO add a friend to a group
-
-    //TODO remove friend
-
-    //TODO remove friend from a group
-
-    //TODO logout
 }

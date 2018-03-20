@@ -37,6 +37,7 @@ Code 6: creating a group (users should be online)
 Code 7: add a person to a group
 
     format: 7|<groupname>|<friend's username>
+    GUI format: <groupname>|<friend's username>
     
 
 Code 8: send a message to a group
