@@ -7,12 +7,18 @@ import javafx.scene.control.Tab;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 
+import java.awt.*;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Controller1 {
     @FXML private JFXTabPane tabPane;
@@ -232,6 +238,24 @@ public class Controller1 {
                 tempHist.put((text),text1);
             }
         }
+    }
+
+
+
+    File file;                                     //chosen file and to be sent
+    @FXML void upload()
+    {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Select file");
+        fileChooser.setInitialDirectory(
+                new File(System.getProperty("user.home"))
+        );
+        File file = fileChooser.showOpenDialog(Main.stage);
+        Desktop.getDesktop();
+
+        //TODO send file
+        System.out.println("File to be sent to: "+selectedUser+"is at: "+file.getAbsolutePath());
+
     }
 
 }
