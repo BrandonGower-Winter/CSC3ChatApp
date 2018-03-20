@@ -55,8 +55,7 @@ public class Server extends Thread
       clients.put(name ,thread);
     }
 
-    void send(Message msg, String sender)
-    {
+    void send(Message msg, String sender) throws IOException {
         switch (msg.getCommand())
         {
             case 0:

@@ -58,7 +58,7 @@ class MultiUsers extends Thread
 
 
 
-    synchronized void addMem(Message msg, HashMap<String, ServerClientThread> clients, String sender) {
+    synchronized void addMem(Message msg, HashMap<String, ServerClientThread> clients, String sender) throws IOException {
         database.addMem(msg.getTarget(),sender,msg.getContent());
     }
 

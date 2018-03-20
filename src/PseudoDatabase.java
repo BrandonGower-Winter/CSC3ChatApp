@@ -1,7 +1,8 @@
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Scanner;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.*;
 import java.io.*;
 
 public class PseudoDatabase {
@@ -143,11 +144,15 @@ public class PseudoDatabase {
         while (scanner.hasNextLine())
         {
             String s = scanner.nextLine();
-            if (s.substring(0,s.indexOf("|")).compareTo(name)==0)
+            if (s.length()>0)
             {
-                System.out.println("group already exists");
-                return new ArrayList<>(0);
+                if (s.substring(0,s.indexOf("|")).compareTo(name)==0)
+                {
+                    System.out.println("group already exists");
+                    return new ArrayList<>(0);
+                }
             }
+
         }
 
 
@@ -179,18 +184,49 @@ public class PseudoDatabase {
 
 
 
-    synchronized boolean addMem(String groupName, String owner, String mem)
-    {
-        if (groupData.containsKey(groupName) && userData.get(owner).contains(mem))
-        {
-            System.out.println("Successfully added: "+mem+ "to group: "+groupName);
-            groupData.get(groupName).add(mem);
-            Controller1.groupNotific(groupName,mem);
+    synchronized boolean addMem(String groupName, String owner, String mem) throws IOException {
 
-            return true;
+        Scanner scanner = new Scanner(new FileInputStream("./resources/groups"));
+
+        boolean bool = false;
+        int pos = 0;
+        int count =0;
+        ArrayList<String> list = new ArrayList<>(0);
+        while (scanner.hasNextLine())
+        {
+            String s = scanner.nextLine();
+            if (s.length()>0)
+            {
+                if (s.substring(0,s.indexOf("|")).compareTo(groupName)==0 && userData.get(owner).contains(mem))
+                {
+                    s+=mem+",";
+                    bool = true;
+                    System.out.println("group exists");
+                }
+            }
+            list.add(s);
+            count++;
         }
-        else
-            return false;
+
+
+        if (bool)
+        {
+            //not a pretty solution
+
+            FileWriter userFile = new FileWriter("./resources/groups",false);
+            BufferedWriter userFileBuffer = new BufferedWriter(userFile);
+            PrintWriter printer = new PrintWriter(userFileBuffer);
+            for (String string: list)
+            {
+                printer.println(string);
+            }
+            printer.close();
+            userFileBuffer.close();
+            userFile.close();
+
+        }
+
+        return true;
     }
 
 
