@@ -67,6 +67,22 @@ public class Server extends Thread
                     System.out.println(sender + " attempted to message " + msg.getTarget() + " but they are not friends.");
                 break;
 
+            case 1:
+                System.out.println("File Recieved");
+                //System.out.println(msg.getContent());
+                //Store data in serverclient thread
+                //Ask client if they want to receive file
+                //if no delete data.
+                //if yes send data.
+                if(multiUsers.isFriend(sender,msg.getTarget()))
+                {
+                    System.out.println("User: @" + sender + " is sending a file to " +msg.getTarget());
+                    clients.get(msg.getTarget()).sendFilePermissionMessage(msg,sender);
+                }
+                else
+                    System.out.println(sender + " attempted to message " + msg.getTarget() + " but they are not friends.");
+                break;
+
             case 4:
                 multiUsers.logout(msg,clients,sender);
                 break;

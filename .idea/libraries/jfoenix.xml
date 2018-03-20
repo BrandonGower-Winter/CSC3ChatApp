@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="jfoenix">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/../../CSC3002F/GUIMerge/CSC3ChatApp/lib/jfoenix.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>
