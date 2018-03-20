@@ -181,7 +181,6 @@ public class Controller1 {
         {
             if (string.substring(0,1).compareTo("*")==0)
             {
-                System.out.println("got to herezzz");
                 boolean Nomatch = true;
                 for (Label label: groupList.getItems())
                 {

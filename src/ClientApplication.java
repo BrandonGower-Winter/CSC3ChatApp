@@ -152,6 +152,8 @@ public class ClientApplication
   static void message(String target, String text) throws IOException {
     if (target.compareTo("Broadcast")==0)
       out.writeUTF("0|all|"+text);
+    else if (target.substring(0,1).compareTo("*")==0)
+      out.writeUTF("9|"+target+"|"+text);
     else
       out.writeUTF("0|"+target+"|"+text);
   }

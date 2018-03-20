@@ -187,7 +187,6 @@ public class PseudoDatabase {
     synchronized String[] addMem(String groupName, String owner, String mem) throws IOException {
 
         Scanner scanner = new Scanner(new FileInputStream("./resources/groups"));
-
         boolean bool = false;
         int pos = 0;
         int count =0;

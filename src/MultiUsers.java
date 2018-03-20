@@ -1,6 +1,9 @@
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Scanner;
 
 class MultiUsers extends Thread
 {
@@ -76,13 +79,31 @@ class MultiUsers extends Thread
 
     synchronized void groupMessage(Message msg, HashMap<String, ServerClientThread> clients, String sender) {
         new Thread(() -> {
-            for (String string: database.getGroupData().get(msg.getTarget()))
-            {
-                for (String client: clients.keySet()){
-                    if (client.compareTo(sender)!=0 && string.compareTo(client)==0)
-                        clients.get(client).sendToSocket(msg,sender);
+            try {
+                Scanner scanner = new Scanner(new FileInputStream("./resources/groups"));
+
+                while (scanner.hasNextLine())
+                {
+                    String s = scanner.nextLine();
+                    if (s.length()>0)
+                    {
+                        if (s.substring(0,s.indexOf("|")).compareTo(msg.getTarget())==0)
+                        {
+                            String[] messages = s.substring(s.indexOf("|")+1).split(",");
+
+                            for (String string: messages)
+                            {
+                                if (clients.containsKey(string) && string.compareTo(sender)!=0)
+                                    clients.get(string).sendToSocket(new Message(0,string,"("+sender+") "+msg.getContent()),msg.getTarget());
+                            }
+                        }
+                    }
+
                 }
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
             }
+
         }).start();
     }
 }
