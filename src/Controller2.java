@@ -32,28 +32,6 @@ public class Controller2 {
         }
     }
 
-    @FXML public void RemoveFriend(ActionEvent event) {
-        if (true)
-        {
-            d.clear();
-        }
-        else
-        {
-            d.clear();
-        }
-    }
-
-    @FXML public void removeFriendFromGroup(ActionEvent event) {
-        if (true)
-        {
-            e.clear();
-        }
-        else
-        {
-            e.clear();
-        }
-    }
-
     @FXML public void logout(ActionEvent event) {
         //TODO Save data and notify other clients that user has gone offline
         Platform.exit();
