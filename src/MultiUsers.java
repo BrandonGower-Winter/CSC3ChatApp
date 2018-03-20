@@ -64,7 +64,6 @@ class MultiUsers extends Thread
         {
             for (String ss: res)
             {
-                System.out.println("memberszzz: "+ss);
                 if (clients.containsKey(ss))
                      clients.get(ss).sendToSocket(new Message(0,ss,"Added a new member to the group: "+res[res.length -1]),msg.getTarget());
             }

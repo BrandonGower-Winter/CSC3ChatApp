@@ -2,9 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="c1ec42ba-aa08-41bb-bdc7-cdafd0e5b745" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/CSC3ChatApp/Controller1.class" afterPath="$PROJECT_DIR$/out/production/CSC3ChatApp/Controller1.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/resources/groups" afterPath="$PROJECT_DIR$/resources/groups" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Controller1.java" afterPath="$PROJECT_DIR$/src/Controller1.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/MultiUsers.java" afterPath="$PROJECT_DIR$/src/MultiUsers.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/PseudoDatabase.java" afterPath="$PROJECT_DIR$/src/PseudoDatabase.java" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -29,8 +31,8 @@
       <file leaf-file-name="groups" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/resources/groups">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="15">
-              <caret line="1" column="0" lean-forward="true" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
+            <state relative-caret-position="0">
+              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -39,8 +41,8 @@
       <file leaf-file-name="MultiUsers.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/MultiUsers.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="500">
-              <caret line="67" column="16" lean-forward="false" selection-start-line="67" selection-start-column="16" selection-end-line="67" selection-end-column="16" />
+            <state relative-caret-position="485">
+              <caret line="65" column="13" lean-forward="false" selection-start-line="65" selection-start-column="13" selection-end-line="65" selection-end-column="13" />
               <folding />
             </state>
           </provider>
@@ -59,8 +61,8 @@
       <file leaf-file-name="Controller1.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/Controller1.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="425">
-              <caret line="216" column="25" lean-forward="false" selection-start-line="216" selection-start-column="25" selection-end-line="216" selection-end-column="25" />
+            <state relative-caret-position="371">
+              <caret line="229" column="55" lean-forward="false" selection-start-line="229" selection-start-column="55" selection-end-line="229" selection-end-column="55" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -138,11 +140,11 @@
         <option value="$PROJECT_DIR$/src/ClientApplication.java" />
         <option value="$PROJECT_DIR$/src/Bridge.java" />
         <option value="$PROJECT_DIR$/src/Controller2.java" />
-        <option value="$PROJECT_DIR$/src/Controller1.java" />
         <option value="$PROJECT_DIR$/resources/friends" />
         <option value="$PROJECT_DIR$/src/Server.java" />
         <option value="$PROJECT_DIR$/src/PseudoDatabase.java" />
         <option value="$PROJECT_DIR$/src/MultiUsers.java" />
+        <option value="$PROJECT_DIR$/src/Controller1.java" />
         <option value="$PROJECT_DIR$/resources/groups" />
       </list>
     </option>
@@ -844,6 +846,19 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/PseudoDatabase.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="176">
+          <caret line="186" column="29" lean-forward="false" selection-start-line="186" selection-start-column="29" selection-end-line="186" selection-end-column="29" />
+          <folding>
+            <element signature="e#8845#8846#0" expanded="true" />
+            <element signature="e#8876#8877#0" expanded="true" />
+            <element signature="e#8940#8941#0" expanded="true" />
+            <element signature="e#8972#8973#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/ClientThread.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="290">
@@ -860,13 +875,11 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/Controller1.java">
+    <entry file="file://$PROJECT_DIR$/src/MultiUsers.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="425">
-          <caret line="216" column="25" lean-forward="false" selection-start-line="216" selection-start-column="25" selection-end-line="216" selection-end-column="25" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
+        <state relative-caret-position="485">
+          <caret line="65" column="13" lean-forward="false" selection-start-line="65" selection-start-column="13" selection-end-line="65" selection-end-column="13" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -878,31 +891,20 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/PseudoDatabase.java">
+    <entry file="file://$PROJECT_DIR$/src/Controller1.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="176">
-          <caret line="186" column="29" lean-forward="false" selection-start-line="186" selection-start-column="29" selection-end-line="186" selection-end-column="29" />
+        <state relative-caret-position="371">
+          <caret line="229" column="55" lean-forward="false" selection-start-line="229" selection-start-column="55" selection-end-line="229" selection-end-column="55" />
           <folding>
-            <element signature="e#8845#8846#0" expanded="true" />
-            <element signature="e#8876#8877#0" expanded="true" />
-            <element signature="e#8940#8941#0" expanded="true" />
-            <element signature="e#8972#8973#0" expanded="true" />
+            <element signature="imports" expanded="true" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/MultiUsers.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="500">
-          <caret line="67" column="16" lean-forward="false" selection-start-line="67" selection-start-column="16" selection-end-line="67" selection-end-column="16" />
-          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/resources/groups">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="15">
-          <caret line="1" column="0" lean-forward="true" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding />
         </state>
       </provider>

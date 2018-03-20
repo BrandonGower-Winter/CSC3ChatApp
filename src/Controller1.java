@@ -181,6 +181,7 @@ public class Controller1 {
         {
             if (string.substring(0,1).compareTo("*")==0)
             {
+                System.out.println("got to herezzz");
                 boolean Nomatch = true;
                 for (Label label: groupList.getItems())
                 {
@@ -224,19 +225,14 @@ public class Controller1 {
         }
 
 
-        if (text.substring(0,1).compareTo("*")==0)
+        if (text.substring(0,1).compareTo("*")==0 && !tempHist.containsKey(text))
         {
-            System.out.println(text1);
-            button.setStyle("-fx-background-color: brown;");
-            if (!tempHist.containsKey("*"+text1))
+            button.setStyle("-fx-background-color: blue;");
+            if (!tempHist.containsKey(text))
             {
                 tempHist.put((text),text1);
             }
         }
     }
 
-    public synchronized static void groupNotific(String groupName, String mem) {
-        System.out.println(tempHist.keySet());
-        System.out.println(groupName+"  added: "+mem);
-    }
 }
