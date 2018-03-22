@@ -237,6 +237,27 @@ public class Controller1 {
                 button.setText("Offline at the moment... :(");
                 button.setStyle("-fx-background-color: white;");
             });
+        else if ((text.compareTo("0001")==0))
+        {
+            Platform.runLater(() -> {
+                button.setText("You were friends before now... :)");
+                button.setStyle("-fx-background-color: white;");
+            });
+        }
+        else if ((text.compareTo("0002")==0))
+        {
+            Platform.runLater(() -> {
+                button.setText("Successfully added...");
+                button.setStyle("-fx-background-color: blue;");
+            });
+        }
+        else if ((text.compareTo("0003")==0))
+        {
+            Platform.runLater(() -> {
+                button.setText("Username not found in our servers :(");
+                button.setStyle("-fx-background-color: white;");
+            });
+        }
     }
 
     @FXML public void messaging() throws IOException {

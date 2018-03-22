@@ -41,7 +41,6 @@ public class PseudoDatabase {
         }
         scFriendsFile.close();
         //Read group data here
-
       }
       catch(FileNotFoundException e)
       {
@@ -95,17 +94,19 @@ public class PseudoDatabase {
 
 
 
-    synchronized boolean addFriend(String user, String friend)
+    synchronized int addFriend(String user, String friend)
     {
-        if (!isFriend(user,friend) && userData.get(user).get(1).compareTo("1")==0)
+        if (isFriend(user,friend))
+            return 0;
+        else if (!isFriend(user,friend) && userExists(friend))
         {
             userData.get(user).add(friend);
             System.out.println(user + " is now friends with " + friend);
             writeNewFriend();
-            return true;
+            return 1;
         }
         else
-            return false;
+            return 2;
     }
 
 
@@ -122,20 +123,43 @@ public class PseudoDatabase {
           return false;
     }
 
-    public synchronized boolean isFriend(String user, String friend)
+    synchronized boolean isFriend(String user, String friend)
     {
-      if(userData.containsKey(friend) && userData.containsKey(user))
-      {
-        if(userData.get(user).contains(friend))
-        {
-          return true;
+        try {
+            Scanner scanner = new Scanner(new FileInputStream("./resources/friends"));
+            while (scanner.hasNextLine())
+            {
+                String s = scanner.nextLine();
+                if (s.substring(0,s.indexOf("|")).compareTo(user)==0)
+                {
+                    s = s.substring(s.indexOf("|")+1);
+                    String ss[] = s.split(",");
+                    for (String p: ss)
+                        if (p.compareTo(friend)==0)
+                            return true;
+                    return false;
+                }
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
         }
         return false;
-      }
-      else
-      {
+    }
+
+    private synchronized boolean userExists(String user)
+    {
+        try {
+            Scanner scanner = new Scanner(new FileInputStream("./resources/friends"));
+            while (scanner.hasNextLine())
+            {
+                String s = scanner.nextLine();
+                if (s.substring(0,s.indexOf("|")).compareTo(user)==0)
+                    return true;
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
         return false;
-      }
     }
 
     synchronized ArrayList<String> createGroup(String name, String members, String owner) throws IOException {

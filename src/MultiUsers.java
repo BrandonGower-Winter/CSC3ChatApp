@@ -31,9 +31,9 @@ class MultiUsers extends Thread
             clients.get(sender).sendToSocket(new Message(4,sender,"FAILED TO LOGOUT!"),sender);
     }
 
-    synchronized void addFriend(Message msg, HashMap<String, ServerClientThread> clients, String sender)
+    synchronized int addFriend(Message msg, HashMap<String, ServerClientThread> clients, String sender)
     {
-        database.addFriend(msg.getTarget(),msg.getContent());
+        return (database.addFriend(msg.getTarget(),msg.getContent()));
     }
 
 

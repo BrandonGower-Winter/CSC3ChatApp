@@ -93,7 +93,20 @@ public class Server extends Thread
                 break;
 
             case 5:
-                multiUsers.addFriend(msg,clients,sender);
+                switch (multiUsers.addFriend(msg,clients,sender))
+                {
+                    case 0:
+                        clients.get(sender).sendToSocket(new Message(0,"","0"),"0001");
+                        break;
+                    case 1:
+                        clients.get(sender).sendToSocket(new Message(0,"","0"),"0002");
+                        break;
+
+                    default:
+                        clients.get(sender).sendToSocket(new Message(0,"","0"),"0003");
+                        break;
+                }
+
                 break;
 
             case 6:
