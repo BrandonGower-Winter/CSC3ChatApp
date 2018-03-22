@@ -40,7 +40,7 @@ public class Controller1 {
     static HashMap<String, String> tempHist = new HashMap<>(0);
 
 
-    String selectedUser="";
+    static String selectedUser="";
 
     @FXML public void initialize()
     {
@@ -232,6 +232,14 @@ public class Controller1 {
             }
         }
 
+        if (selectedUser.compareTo(text)==0)
+            Platform.runLater(() ->
+            {
+                JFXTextArea textArea = (JFXTextArea)Main.stage.getScene().getRoot().lookup("#chatSpace");
+                textArea.appendText("\n"+text1);
+            });
+
+
         if ((text.compareTo("0000")==0))
             Platform.runLater(() -> {
                 button.setText("Offline at the moment... :(");
@@ -256,6 +264,13 @@ public class Controller1 {
             Platform.runLater(() -> {
                 button.setText("Username not found in our servers :(");
                 button.setStyle("-fx-background-color: white;");
+            });
+        }
+        else if ((text.compareTo("0004")==0))
+        {
+            Platform.runLater(() -> {
+                button.setText(text1.substring(text1.indexOf(":")+1)+" just added you as their friend! (click to refresh)");
+                button.setStyle("-fx-background-color: blue;");
             });
         }
     }

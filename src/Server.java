@@ -100,6 +100,9 @@ public class Server extends Thread
                         break;
                     case 1:
                         clients.get(sender).sendToSocket(new Message(0,"","0"),"0002");
+
+                        if (clients.containsKey(msg.getContent()))              //does not send notification if user is offline
+                            clients.get(msg.getContent()).sendToSocket(new Message(0,sender,sender),"0004");
                         break;
 
                     default:

@@ -101,6 +101,7 @@ public class PseudoDatabase {
         else if (!isFriend(user,friend) && userExists(friend))
         {
             userData.get(user).add(friend);
+            userData.get(friend).add(user);//what if user is offline
             System.out.println(user + " is now friends with " + friend);
             writeNewFriend();
             return 1;
