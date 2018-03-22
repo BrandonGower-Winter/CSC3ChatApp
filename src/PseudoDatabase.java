@@ -1,17 +1,17 @@
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Scanner;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.*;
 import java.io.*;
 
 public class PseudoDatabase {
 
     //Used in database
-    private HashMap<String,ArrayList<String>> userData = new HashMap<>(0);
+    public static HashMap<String,ArrayList<String>> userData = new HashMap<>(0);
     private HashMap<String,ArrayList<String>> groupData = new HashMap<>(0);
-    HashMap<String,ArrayList<String>> pendingData = new HashMap<>(0);   //will use this to save data sent to offline users
 
-    public PseudoDatabase()
+    PseudoDatabase()
     {
       try
       {
@@ -94,9 +94,7 @@ public class PseudoDatabase {
     }
 
 
-    /**
-     * \TODO Make sure that user is logged on before allowing adding of friends
-     * */
+
     synchronized boolean addFriend(String user, String friend)
     {
         if (!isFriend(user,friend) && userData.get(user).get(1).compareTo("1")==0)
@@ -109,6 +107,8 @@ public class PseudoDatabase {
         else
             return false;
     }
+
+
     //Used on startup to setup friends list
     private synchronized  boolean addFriend(String user,String friend, boolean isServer)
     {
@@ -138,33 +138,98 @@ public class PseudoDatabase {
       }
     }
 
-    synchronized ArrayList<String> createGroup(String name, String members, String owner)
-    {
-        if (groupData.containsKey(name))
-            return new ArrayList<String>(Collections.singletonList("NO MEMBERS!"));
-        else {
-            String[] strings = members.split("\\.");
-            ArrayList<String> flag = new ArrayList<>(0);
-            flag.add(owner);
-            for (String s: strings)
-                if (userData.get(owner).contains(s))
-                    flag.add(s);
-            groupData.put(name,flag);
-            return flag;
+    synchronized ArrayList<String> createGroup(String name, String members, String owner) throws IOException {
+        Scanner scanner = new Scanner(new FileInputStream("./resources/groups"));
+
+        while (scanner.hasNextLine())
+        {
+            String s = scanner.nextLine();
+            if (s.length()>0)
+            {
+                if (s.substring(0,s.indexOf("|")).compareTo(name)==0)
+                {
+                    System.out.println("group already exists");
+                    return new ArrayList<>(0);
+                }
+            }
+
         }
+
+
+        System.out.println("members: "+members);
+        String[] strings = members.split(",");
+        ArrayList<String> flag = new ArrayList<>(0);
+        flag.add(owner);
+        String mem = owner+",";
+        for (String s: strings){
+            if (userData.get(owner).contains(s)) {
+                flag.add(s);
+                mem+=s;
+            }
+        }
+
+        FileWriter userFile = new FileWriter("./resources/groups",true);//True appends to file
+        BufferedWriter userFileBuffer = new BufferedWriter(userFile);
+        PrintWriter printer = new PrintWriter(userFileBuffer);
+        printer.println(name + "|" + mem);
+        printer.close();
+        userFileBuffer.close();
+        userFile.close();
+
+
+
+        return flag;
+
     }
 
 
 
-    synchronized boolean addMem(String groupName, String owner, String mem)
-    {
-        if (groupData.containsKey(groupName) && groupData.get(groupName).get(0).compareTo(owner)==0 && userData.get(owner).contains(mem))
+    synchronized String[] addMem(String groupName, String owner, String mem) throws IOException {
+
+        Scanner scanner = new Scanner(new FileInputStream("./resources/groups"));
+        boolean bool = false;
+        int pos = 0;
+        int count =0;
+        String[] res = null;
+        ArrayList<String> list = new ArrayList<>(0);
+        while (scanner.hasNextLine())
         {
-            groupData.get(groupName).add(mem);
-            return true;
+            String s = scanner.nextLine();
+            if (s.length()>0)
+            {
+                if (s.substring(0,s.indexOf("|")).compareTo(groupName)==0 && userData.get(owner).contains(mem))
+                {
+                    s+=mem+",";
+                    bool = true;
+                    System.out.println("group exists");
+                    String flag = s.substring(s.indexOf("|")+1);
+                    res = flag.split(",");
+
+                }
+            }
+            list.add(s);
+            count++;
         }
-        else
-            return false;
+
+
+        if (bool)
+        {
+            //not a pretty solution
+
+            FileWriter userFile = new FileWriter("./resources/groups",false);
+            BufferedWriter userFileBuffer = new BufferedWriter(userFile);
+            PrintWriter printer = new PrintWriter(userFileBuffer);
+            for (String string: list)
+            {
+                printer.println(string);
+            }
+            printer.close();
+            userFileBuffer.close();
+            userFile.close();
+
+        }
+
+        return res;
     }
 
 
@@ -256,9 +321,5 @@ public class PseudoDatabase {
 
     public HashMap<String, ArrayList<String>> getGroupData() {
         return groupData;
-    }
-
-    public HashMap<String, ArrayList<String>> getPendingData() {
-        return pendingData;
     }
 }

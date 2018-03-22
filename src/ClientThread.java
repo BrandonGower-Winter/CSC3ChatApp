@@ -1,14 +1,14 @@
+import javax.swing.*;
 import java.net.*;
 import java.io.*;
-import javax.swing.JOptionPane;
-import java.util.Scanner;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Base64;
+import java.util.HashMap;
+import java.util.Scanner;
 
 public class ClientThread extends Thread
 {
-  private Socket client;
+  private static Socket client;
   private HashMap<String,ArrayList<Networkfile>> filesToWrite;
 
   public ClientThread(Socket client)
@@ -30,50 +30,48 @@ public class ClientThread extends Thread
         switch(msg.getCommand())
         {
           case 0:
-                System.out.println("@" + msg.getTarget() + ": " + msg.getContent());
+            Controller1.receiveMessage(msg.getTarget(),"\n"+msg.getTarget()+": "+msg.getContent());
                 break;
           case 50:
                 notifyClientLoginStatus(msg);
                 break;
           case 51:
-              Scanner scFileMessage = new Scanner(msg.getContent()).useDelimiter("%");
-              System.out.println("File permissions: " + msg.getContent());
-              if(JOptionPane.showConfirmDialog(null,"@" + msg.getTarget() + " wants to send file: " + scFileMessage.next() + " ("+scFileMessage.nextInt()+") bytes","File from " + msg.getTarget(),JOptionPane.YES_NO_OPTION)==0)
-              {
-                sendFileConfirmation(msg.getTarget(),true);
-              }
-              else
-              {
-                sendFileConfirmation(msg.getTarget(),false);
-              }
-              break;
+            Scanner scFileMessage = new Scanner(msg.getContent()).useDelimiter("%");
+            System.out.println("File permissions: " + msg.getContent());
+            if(JOptionPane.showConfirmDialog(null,"@" + msg.getTarget() + " wants to send file: " + scFileMessage.next() + " ("+scFileMessage.nextInt()+") bytes","File from " + msg.getTarget(),JOptionPane.YES_NO_OPTION)==0)
+            {
+              sendFileConfirmation(msg.getTarget(),true);
+            }
+            else
+            {
+              sendFileConfirmation(msg.getTarget(),false);
+            }
+            break;
           case 52:
 
-              Networkfile toAdd = Networkfile.parseNetworkFile(msg.getContent());
-              if(filesToWrite.containsKey(msg.getTarget()))
+            Networkfile toAdd = Networkfile.parseNetworkFile(msg.getContent());
+            if(filesToWrite.containsKey(msg.getTarget()))
+            {
+              filesToWrite.get(msg.getTarget()).add(toAdd);
+            }
+            else
+            {
+              ArrayList<Networkfile> fileBits = new ArrayList<Networkfile>();
+              fileBits.add(toAdd);
+              filesToWrite.put(msg.getTarget(),fileBits);
+            }
+            if(filesToWrite.get(msg.getTarget()).size() == Math.ceil(toAdd.getFileSize()/(double)16000))
+            {
+              //System.out.println("Time to write file on part: " + toAdd.getFilePart());
+              FileOutputStream out = new FileOutputStream(toAdd.getName());
+              for(Networkfile filebit : filesToWrite.get(msg.getTarget()))
               {
-                filesToWrite.get(msg.getTarget()).add(toAdd);
+                byte[] b = Base64.getDecoder().decode(filebit.getContent());
+                out.write(b);
               }
-              else
-              {
-                ArrayList<Networkfile> fileBits = new ArrayList<Networkfile>();
-                fileBits.add(toAdd);
-                filesToWrite.put(msg.getTarget(),fileBits);
-              }
-              if(filesToWrite.get(msg.getTarget()).size() == Math.ceil(toAdd.getFileSize()/(double)16000))
-              {
-                //System.out.println("Time to write file on part: " + toAdd.getFilePart());
-                FileOutputStream out = new FileOutputStream(toAdd.getName());
-                for(Networkfile filebit : filesToWrite.get(msg.getTarget()))
-                {
-                  byte[] b = Base64.getDecoder().decode(filebit.getContent());
-                  out.write(b);
-                }
-                out.close();
-                filesToWrite.remove(msg.getTarget());
-              }
-
-              break;
+              out.close();
+              filesToWrite.remove(msg.getTarget());
+            }
         }
         //Ignore this.
         if(msg.getContent().compareTo("exit") == 0)
@@ -122,5 +120,4 @@ public class ClientThread extends Thread
       break;
     }
   }
-
 }

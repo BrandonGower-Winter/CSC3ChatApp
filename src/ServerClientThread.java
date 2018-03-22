@@ -1,17 +1,16 @@
 import java.net.*;
 import java.io.*;
-import java.util.HashMap;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class ServerClientThread extends Thread
 {
-  protected String clientName;
-  protected Socket serverClientConnection;
-  protected Server server;
-
+  private String clientName;
+  private Socket serverClientConnection;
+  private Server server;
   private HashMap<String,ArrayList<String>> fileBuffer;
 
-  public ServerClientThread(Socket socket,Server server)
+  ServerClientThread(Socket socket, Server server)
   {
     this.clientName = "UNDEFINED";
     this.serverClientConnection = socket;
@@ -70,7 +69,7 @@ public class ServerClientThread extends Thread
       while(true)
       {
         String toSend = in.readUTF();
-        //System.out.println("User: @" + clientName + " typed: " + toSend);
+        System.out.println("User: @" + clientName + " typed: " + toSend);
         server.send(Server.parseMesseage(toSend),clientName);
         //Ignore this does nothing healthy right now
         if(toSend.compareTo("exit") == 0)
@@ -84,7 +83,7 @@ public class ServerClientThread extends Thread
     }
   }
 
-  public void sendToSocket(Message msg,String sender)
+  void sendToSocket(Message msg, String sender)
   {
     try
     {
@@ -103,9 +102,9 @@ public class ServerClientThread extends Thread
     try
     {
       //System.out.println("Sender in permission is " + sender);
-      //fileBuffer.put(sender,Networkfile.parseNetworkFile(msg.getContent())); //Means user can only send one file at a time. Maybe we can change later?
+     // fileBuffer.put(sender,Networkfile.parseNetworkFile(msg.getContent())); //Means user can only send one file at a time. Maybe we can change later? TODO
       DataOutputStream out = new DataOutputStream(serverClientConnection.getOutputStream());
-      //System.out.println(fileBuffer.get(sender).toString());
+     // System.out.println(fileBuffer.get(sender).toString());
       String toSend = "51|"+ sender + "|" + msg.getContent();
       out.writeUTF(toSend);
     }
@@ -156,10 +155,8 @@ public class ServerClientThread extends Thread
     }
   }
 
-  //** * * *  * * * **  * *         * * *   * * * * * *     * * * * * * * * *
-  public void setClientName(String clientName) {
+  void setClientName(String clientName) {
     this.clientName = clientName;
   }
-  //** * * *  * * * **  * *         * * *   * * * * * *     * * * * * * * * *
 
 }

@@ -1,5 +1,3 @@
-package GUI;
-
 import com.jfoenix.controls.JFXPasswordField;
 import com.jfoenix.controls.JFXTextField;
 import javafx.event.ActionEvent;
@@ -17,13 +15,11 @@ public class Controller {
 
     @FXML void login(ActionEvent event)
     {
-        //TODO have to check with the databse whether login credentials are valid
-
-        if (userN.getText().compareTo("user")==0 && userPass.getText().compareTo("password")==0)
+        if (Bridge.login(userN.getText(),userPass.getText()))
         {
             try
             {
-                ((Stage) ((Node)event.getSource()).getScene().getWindow()).setScene(new Scene(FXMLLoader.load(getClass().getResource("Home.fxml"))));
+                ((Stage) ((Node)event.getSource()).getScene().getWindow()).setScene(new Scene(FXMLLoader.load(getClass().getResource("resources/Home.fxml"))));
             }
             catch (IOException e)
             {
@@ -33,25 +29,23 @@ public class Controller {
         else
         {
             userN.clear();
+            userN.setPromptText("Failed to login!");
             userPass.clear();
         }
 
     }
 
     @FXML void reg(ActionEvent event){
-
-        //TODO check if user is a duplicate and insert user to database
-        if (true)
-        {
+        if (Bridge.reg(userN.getText(),userPass.getText()))
             try
             {
-                ((Stage) ((Node)event.getSource()).getScene().getWindow()).setScene(new Scene(FXMLLoader.load(getClass().getResource("Home.fxml"))));
+                ((Stage) ((Node)event.getSource()).getScene().getWindow()).setScene(new Scene(FXMLLoader.load(getClass().getResource("resources/Home.fxml"))));
             }
             catch (IOException e)
             {
                 e.printStackTrace();
             }
-        }
+
         else
             {
                 userN.clear();
@@ -60,6 +54,5 @@ public class Controller {
             }
 
     }
-
 
 }

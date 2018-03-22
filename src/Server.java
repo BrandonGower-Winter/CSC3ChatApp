@@ -5,6 +5,9 @@
 
 import java.net.*;
 import java.io.*;
+import java.nio.file.Files;
+import java.util.Arrays;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Scanner;
 
@@ -12,12 +15,12 @@ public class Server extends Thread
 {
     private ServerSocket serverSocket;
     private HashMap<String,ServerClientThread> clients;
-    private MultiUsers multiUsers = new MultiUsers(); // *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *
+    private MultiUsers multiUsers = new MultiUsers();
 
     public Server(int port) throws IOException
     {
         serverSocket = new ServerSocket(port);
-        clients = new HashMap<String,ServerClientThread>();
+        clients = new HashMap<>();
     }
 
     public void run()
@@ -40,40 +43,29 @@ public class Server extends Thread
         }
     }
 
-    public boolean register(Message msg) //Registers and logs in new user
+    boolean register(Message msg) //Registers and logs in new user
     {
-        if(multiUsers.registration(msg))
-        {
-          return multiUsers.login(msg);
-        }
-        return false;
+        return multiUsers.registration(msg) && multiUsers.login(msg);
     }
 
-    public boolean login(Message msg)
+    boolean login(Message msg)
     {
         return multiUsers.login(msg);
     }
 
-    public void addLoggedInClient(String name, ServerClientThread thread)
+    void addLoggedInClient(String name, ServerClientThread thread)
     {
       clients.put(name ,thread);
     }
 
-    public void send(Message msg,String sender)
-    {
-        switch (msg.getCommand())// *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *
+    void send(Message msg, String sender) throws IOException {
+        switch (msg.getCommand())
         {
             case 0:
                 if (msg.getTarget().compareTo("all")==0)    //sends message to all users the sender is friends with.
-                {
-                  new Broadcaster(multiUsers,clients,msg,sender,false).start();
-                  System.out.println("User: @" + sender + " broadcasted: " + msg.getContent());
-                }
+                    new Broadcaster(multiUsers,clients,msg,sender,false).start();
                 else if(multiUsers.isFriend(sender,msg.getTarget()))
-                {
-                  System.out.println("User: @" + sender + " messaged " +msg.getTarget() + ": " + msg.getContent());
-                  clients.get(msg.getTarget()).sendToSocket(msg,sender);
-                }
+                    clients.get(msg.getTarget()).sendToSocket(msg,sender);
                 else
                     System.out.println(sender + " attempted to message " + msg.getTarget() + " but they are not friends.");
                 break;
@@ -87,20 +79,13 @@ public class Server extends Thread
                 //if yes send data.
                 if(multiUsers.isFriend(sender,msg.getTarget()))
                 {
-                  System.out.println("User: @" + sender + " is sending a file to " +msg.getTarget());
-                  clients.get(msg.getTarget()).sendFilePermissionMessage(msg,sender);
+                    System.out.println("User: @" + sender + " is sending a file to " +msg.getTarget());
+                    clients.get(msg.getTarget()).sendFilePermissionMessage(msg,sender);
                 }
                 else
                     System.out.println(sender + " attempted to message " + msg.getTarget() + " but they are not friends.");
                 break;
 
-            case 2:
-                multiUsers.registration(msg,sender,clients);                                                                              //registration
-                break;
-
-            case 3:
-                multiUsers.login(msg,clients,sender);
-                break;
             case 4:
                 multiUsers.logout(msg,clients,sender);
                 break;
@@ -110,7 +95,11 @@ public class Server extends Thread
                 break;
 
             case 6:
-                multiUsers.createGroup(msg,clients,sender);
+                try {
+                    multiUsers.createGroup(msg,clients,sender);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 break;
             case 7:
                 multiUsers.addMem(msg,clients,sender);
@@ -123,29 +112,59 @@ public class Server extends Thread
                 break;
             case 10:
                 if(Integer.parseInt(msg.getContent()) == 0)
-                  clients.get(sender).sendFile(msg.getTarget(),true);
-                  //System.out.println("Sender is confirming " + msg.getTarget() + "'s file");
+                    clients.get(sender).sendFile(msg.getTarget(),true);
+                    //System.out.println("Sender is confirming " + msg.getTarget() + "'s file");
                 else
-                  clients.get(sender).sendFile(msg.getTarget(),false);
-                  //System.out.println("Sender is denying " + msg.getTarget() + "'s file");
-            case 11: //Add a bit of the file to the file buffer
-                clients.get(msg.getTarget()).addBitToFileList(sender,msg);
+                    clients.get(sender).sendFile(msg.getTarget(),false);
+                //System.out.println("Sender is denying " + msg.getTarget() + "'s file");
+            case 11:
+
+                File f = new File(msg.getContent());
+                if (f.exists())
+                {
+                    byte[] fileBytes = Files.readAllBytes(f.toPath());
+
+                    System.out.println("Sending file: "+fileBytes.length);
+                    int partsToSend = (int)Math.ceil(fileBytes.length/(double)16000);
+                    System.out.println("File will be sent in " + partsToSend + " parts");
+
+                    for(int i = 0; i < partsToSend; i++)
+                    {
+                        String fileData = f.getName() + "%" + fileBytes.length + "%" + (i+1) + "%";
+                        if(i+1 != partsToSend)
+                        {
+                            //fileData+= Arrays.copyOfRange(fileBytes,16000*(i),16000*(i+1)).length;
+                            fileData += Base64.getEncoder().encodeToString(Arrays.copyOfRange(fileBytes,16000*(i),16000*(i+1)));
+                        }
+                        else
+                        {
+                            //fileData+= Arrays.copyOfRange(fileBytes,16000*(i),fileBytes.length).length;
+                            fileData += Base64.getEncoder().encodeToString(Arrays.copyOfRange(fileBytes,16000*(i),fileBytes.length));
+                        }
+                        msg.setContent(fileData);
+                        clients.get(msg.getTarget()).addBitToFileList(sender,msg);
+                    }
+
+                    Message message = new Message(1,msg.getTarget(),f.getName()+"%"+fileBytes.length);
+                    send(message,sender);
+                    clients.get(msg.getTarget()).addBitToFileList(sender,msg);
+                }
+
                 break;
-        }                       // *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *
+        }
 
     }
 
-    public synchronized void serverBroadcast(String messageContent)
+    private synchronized void serverBroadcast(String messageContent)
     {
       Message msg = new Message(0,"all",messageContent);
       new Broadcaster(multiUsers,clients,msg,"Server",true).start();
-      System.out.println("Got here!");
     }
 
     public static void main(String[] args)
     {
         int port;
-        if(args.length < 1)
+        if(args.length > 1)
         {
           port = Integer.parseInt(args[0]);
         }
@@ -177,7 +196,6 @@ public class Server extends Thread
                   break serverLifeTimeLoop;
               }
             }
-            System.out.println("Got here");
         }
         catch(IOException e)
         {
@@ -187,7 +205,7 @@ public class Server extends Thread
 
     //Possibly Temporary
     //Will add error management later
-    public static Message parseMesseage(String message)
+    static Message parseMesseage(String message)
     {
         Scanner parser = new Scanner(message).useDelimiter("\\|");
         Message msg = new Message(parser.nextInt(),parser.next(),parser.next());

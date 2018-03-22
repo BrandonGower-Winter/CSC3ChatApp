@@ -1,15 +1,15 @@
 import java.net.*;
 import java.io.*;
-import java.util.Scanner;
-import java.util.Arrays;
 import java.nio.file.Files;
+import java.util.Arrays;
 import java.util.Base64;
+import java.util.Scanner;
 
 public class ClientApplication
 {
-
+  static DataOutputStream out;
   private static int clientLoginStatus = 0;
-  private static String username;
+
   public static synchronized void changeClientLoginStatus(int i)
   {
     if(i > -2 && i < 2)
@@ -41,16 +41,19 @@ public class ClientApplication
 
       System.out.println("Just connected to " + client.getRemoteSocketAddress());
       Scanner input = new Scanner(System.in);
-      DataOutputStream out =  new DataOutputStream(client.getOutputStream());
+      out =  new DataOutputStream(client.getOutputStream());
 
       new ClientThread(client).start();
-      //Will make neater
-      while(!manageUserLogin(out,input)){}
+      Bridge.runGUI();
+
+
       //Manages user output.
       while(true)
       {
-        Message toSend = Server.parseMesseage(input.nextLine());
-        switch(toSend.getCommand())
+        String toSend = input.nextLine();
+        out.writeUTF(toSend);
+
+       /* switch(11)
         {
           case 11:
             File f = new File(toSend.getContent());
@@ -72,16 +75,17 @@ public class ClientApplication
                 fileData += Base64.getEncoder().encodeToString(Arrays.copyOfRange(fileBytes,16000*(i),fileBytes.length));
               }
               //System.out.println("Data being sent:\n" + fileData);
-              toSend.setContent(fileData);
-              out.writeUTF(toSend.toString());
+              toSend.setContent(fileData); i am here
+              out.writeUTF(toSend.toString()); 
             }
             out.writeUTF("1|"+toSend.getTarget()+"|"+f.getName()+"%"+fileBytes.length);
             break;
           default:
             out.writeUTF(toSend.toString());
-        }
+        }*/
+
         //Ignore this.
-        if(toSend.getContent().compareTo("exit") == 0)
+        if(toSend.compareTo("exit") == 0)
           break;
 
       }
@@ -94,53 +98,59 @@ public class ClientApplication
     }
   }
 
-  private static boolean manageUserLogin(DataOutputStream out, Scanner input)
+
+  static boolean registration(String text1, String text2)
+  {
+
+    try {
+        out.writeUTF("2|"+text1+"|"+text2);
+      } catch (IOException e1) {
+        e1.printStackTrace();
+      }
+      boolean response = waitClientLoginStatus();
+      if(response)
+      {
+        System.out.println("Registration Successful!");
+      }
+      else
+      { clientLoginStatus = 0;
+        return false;
+      }
+    return true;
+  }
+
+  static boolean addFriend(String me, String friend) throws IOException {
+    out.writeUTF("5|"+me+"|"+friend);
+    return true;
+  }
+
+  static boolean createGroup(String GroupName,String sender) throws IOException {
+    String temp = GroupName.substring(GroupName.indexOf("|")+1);
+    GroupName = GroupName.substring(0,GroupName.indexOf("|"));
+    out.writeUTF("6|*"+GroupName+"|"+sender+","+temp);
+    return true;
+  }
+
+
+  public static boolean login(String text1, String text2)
   {
     try
     {
-      System.out.println("Type 1 to create account and 2 to login");
-      if(Integer.parseInt(input.nextLine())== 1)
-      {
-        System.out.println("Register... Type: 2|<Username>|<Password>");
-        String userLoginDetails = input.nextLine();
-        out.writeUTF(userLoginDetails);
-        boolean response = waitClientLoginStatus();
-        if(response)
-        {
-          Scanner scLine = new Scanner(userLoginDetails).useDelimiter("\\|");
-          scLine.next();
-          username = scLine.next();
-          scLine.close();
-          System.out.println("Registration Successful!");
-        }
-        else
-        {
-          System.out.println("Registration Failure! Account Already Exists!!!");
-          clientLoginStatus = 0;
-
-        }
-        return response;
-      }
-      else
       {
         System.out.println("Login... Type: 3|<Username>|<Password>");
-        String userLoginDetails = input.nextLine();
-        out.writeUTF(userLoginDetails);
+        out.writeUTF("3|"+text1+"|"+text2);
         boolean response = waitClientLoginStatus();
         if(response)
         {
-          Scanner scLine = new Scanner(userLoginDetails).useDelimiter("\\|");
-          scLine.next();
-          username = scLine.next();
-          scLine.close();
           System.out.println("Login Successful!");
+          return true;
         }
         else
         {
           System.out.println("Login Failure! Username or password incorrect!!!");
           clientLoginStatus = 0;
+          return false;
         }
-        return response;
       }
     }
     catch(IOException e)
@@ -173,4 +183,22 @@ public class ClientApplication
       return false;
     }
   }
+
+  static void message(String target, String text) throws IOException {
+    if (target.compareTo("Broadcast")==0)
+      out.writeUTF("0|all|"+text);
+    else if (target.substring(0,1).compareTo("*")==0)
+      out.writeUTF("9|"+target+"|"+text);
+    else
+      out.writeUTF("0|"+target+"|"+text);
+  }
+
+  static void addGroupMember(String text) throws IOException {
+    out.writeUTF("7|*"+text);
+  }
+
+  static void sendFile(String selectedUser, File file) throws IOException {
+    out.writeUTF("11|"+selectedUser+"|"+file.getAbsolutePath());
+  }
+
 }

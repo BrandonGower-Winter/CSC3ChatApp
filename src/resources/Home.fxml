@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import com.jfoenix.controls.*?>
-<?import javafx.scene.layout.*?>
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXDrawer?>
+<?import com.jfoenix.controls.JFXHamburger?>
+<?import com.jfoenix.controls.JFXTabPane?>
+<?import com.jfoenix.controls.JFXTextArea?>
+<?import com.jfoenix.controls.JFXTextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
 
-<HBox maxHeight="408.0" maxWidth="959.0" minHeight="408.0" minWidth="947.0" prefHeight="408.0" prefWidth="947.0" style="-fx-background-image: url(resources/pic1.jpg); -fx-background-size: cover;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUI.Controller1">
+<HBox maxHeight="408.0" maxWidth="959.0" minHeight="408.0" minWidth="947.0" prefHeight="408.0" prefWidth="947.0" style="-fx-background-image: url(resources/pic1.jpg); -fx-background-size: cover;" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller1">
    <children>
       <Region layoutX="948.0" layoutY="10.0" prefHeight="408.0" prefWidth="28.0" />
       <VBox>
@@ -20,7 +26,7 @@
             <Region maxHeight="15.0" minHeight="15.0" prefHeight="12.0" prefWidth="675.0" />
             <HBox fx:id="hbox" maxWidth="660.0" prefWidth="660.0">
                <children>
-                  <JFXButton fx:id="headerInfo" prefHeight="43.0" prefWidth="675.0" style="-fx-background-color: orange; -fx-border-radius: 50%;" text="User: &quot;John Doe&quot; is offline (last seen 02\64\3030)" textAlignment="CENTER" />
+                  <JFXButton fx:id="headerInfo" onAction="#refresh" prefHeight="43.0" prefWidth="675.0" style="-fx-background-color: orange; -fx-border-radius: 50%;" text="User: &quot;John Doe&quot; is offline (last seen 02\64\3030)" textAlignment="CENTER" />
                   <JFXHamburger fx:id="hamburger" maxWidth="40.0" minWidth="40.0" prefHeight="43.0" prefWidth="40.0" HBox.hgrow="NEVER" />
                </children>
             </HBox>
@@ -42,7 +48,7 @@
                   <Region maxWidth="17.0" minWidth="17.0" prefHeight="46.0" prefWidth="17.0" HBox.hgrow="NEVER" />
                   <JFXButton fx:id="sendingButton" buttonType="RAISED" maxWidth="66.0" minWidth="66.0" onAction="#messaging" prefHeight="44.0" prefWidth="66.0" style="-fx-background-color: white;" text="Send" HBox.hgrow="NEVER" />
                   <Region layoutX="517.0" layoutY="10.0" maxWidth="25.0" minWidth="25.0" prefHeight="46.0" prefWidth="25.0" HBox.hgrow="NEVER" />
-                  <JFXButton buttonType="RAISED" maxWidth="91.0" minWidth="91.0" prefHeight="42.0" prefWidth="91.0" style="-fx-background-color: white;" text="Upload" HBox.hgrow="NEVER" />
+                  <JFXButton buttonType="RAISED" maxWidth="91.0" minWidth="91.0" onAction="#upload" prefHeight="42.0" prefWidth="91.0" style="-fx-background-color: white;" text="Upload" HBox.hgrow="NEVER" />
                </children>
             </HBox>
          </children>

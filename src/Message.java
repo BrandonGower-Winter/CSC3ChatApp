@@ -17,7 +17,7 @@ public class Message
 
   public Message()
   {
-
+    
   }
 
   public int getCommand()
@@ -45,9 +45,7 @@ public class Message
     target = t;
   }
 
-  public void setContent(String c)
-  {
-    content = c;
+  public void setContent(String content) {
+    this.content = content;
   }
-
 }

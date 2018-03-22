@@ -11,8 +11,8 @@ PORT = 4444
 .java.class:
 						$(JC) -cp .:./bin -d $(JCLASSDIR) $(JFLAGS) $*.java
 
-CLASSES = $(SRC)*.java\
-					$(TEST)*.java
+CLASSES = $(TEST)*.java\
+					$(SRC)*.java
 
 
 
@@ -36,8 +36,6 @@ runServer:
 runClient:
 		java -cp ./bin/ ClientApplication localhost $(PORT)
 
-runEncryptTest:
-		java -cp ./bin/ EncryptionTester
 
 classes: $(CLASSES:.java=.class)
 
