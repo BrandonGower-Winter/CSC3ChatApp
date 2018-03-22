@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import javafx.scene.image.*?>
-<?import com.jfoenix.controls.*?>
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXTextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
-
 <VBox maxHeight="292.0" maxWidth="249.0" minHeight="292.0" minWidth="249.0" prefHeight="292.0" prefWidth="249.0" style="-fx-background-image: url(resources/pic.jpg); -fx-background-size: cover;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller2">
    <children>
       <HBox prefHeight="135.0" prefWidth="249.0" style="-fx-background-color: transparent;">

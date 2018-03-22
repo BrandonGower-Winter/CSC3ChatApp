@@ -53,37 +53,6 @@ public class ClientApplication
         String toSend = input.nextLine();
         out.writeUTF(toSend);
 
-       /* switch(11)
-        {
-          case 11:
-            File f = new File(toSend.getContent());
-            byte[] fileBytes = Files.readAllBytes(f.toPath());
-            System.out.println("Sending file: " + fileBytes.length);
-            int partsToSend = (int)Math.ceil(fileBytes.length/(double)16000);
-            System.out.println("File will be sent in " + partsToSend + " parts");
-            for(int i = 0; i < partsToSend; i++)
-            {
-              String fileData = f.getName() + "%" + fileBytes.length + "%" + (i+1) + "%";
-              if(i+1 != partsToSend)
-              {
-                //fileData+= Arrays.copyOfRange(fileBytes,16000*(i),16000*(i+1)).length;
-                fileData += Base64.getEncoder().encodeToString(Arrays.copyOfRange(fileBytes,16000*(i),16000*(i+1)));
-              }
-              else
-              {
-                //fileData+= Arrays.copyOfRange(fileBytes,16000*(i),fileBytes.length).length;
-                fileData += Base64.getEncoder().encodeToString(Arrays.copyOfRange(fileBytes,16000*(i),fileBytes.length));
-              }
-              //System.out.println("Data being sent:\n" + fileData);
-              toSend.setContent(fileData); i am here
-              out.writeUTF(toSend.toString()); 
-            }
-            out.writeUTF("1|"+toSend.getTarget()+"|"+f.getName()+"%"+fileBytes.length);
-            break;
-          default:
-            out.writeUTF(toSend.toString());
-        }*/
-
         //Ignore this.
         if(toSend.compareTo("exit") == 0)
           break;

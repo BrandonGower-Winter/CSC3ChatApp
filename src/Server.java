@@ -6,10 +6,7 @@
 import java.net.*;
 import java.io.*;
 import java.nio.file.Files;
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.Scanner;
+import java.util.*;
 
 public class Server extends Thread
 {
@@ -65,7 +62,12 @@ public class Server extends Thread
                 if (msg.getTarget().compareTo("all")==0)    //sends message to all users the sender is friends with.
                     new Broadcaster(multiUsers,clients,msg,sender,false).start();
                 else if(multiUsers.isFriend(sender,msg.getTarget()))
-                    clients.get(msg.getTarget()).sendToSocket(msg,sender);
+                {
+                    if (clients.containsKey(msg.getTarget()))
+                        clients.get(msg.getTarget()).sendToSocket(msg,sender);
+                    else
+                        clients.get(sender).sendToSocket(new Message(0,"","0"),"0000");         //0000 is code for target client is offline
+                }
                 else
                     System.out.println(sender + " attempted to message " + msg.getTarget() + " but they are not friends.");
                 break;
