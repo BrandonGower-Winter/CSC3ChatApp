@@ -132,11 +132,12 @@ public class Server extends Thread
                     fileData += Base64.getEncoder().encodeToString(Arrays.copyOfRange(fileBytes,16000*(i),fileBytes.length));
                 }
                 msg.setContent(fileData);
-                //send(msg,sender);
+                    clients.get(msg.getTarget()).addBitToFileList(sender,msg);
                 }
 
                 Message message = new Message(1,msg.getTarget(),f.getName()+"%"+fileBytes.length);
                 send(message,sender);
+                clients.get(msg.getTarget()).addBitToFileList(sender,msg);
 
                 break;
         }
