@@ -110,7 +110,13 @@ public class Server extends Thread
             case 9:
                 multiUsers.groupMessage(msg,clients,sender);
                 break;
-
+            case 10:
+                if(Integer.parseInt(msg.getContent()) == 0)
+                    clients.get(sender).sendFile(msg.getTarget(),true);
+                    //System.out.println("Sender is confirming " + msg.getTarget() + "'s file");
+                else
+                    clients.get(sender).sendFile(msg.getTarget(),false);
+                //System.out.println("Sender is denying " + msg.getTarget() + "'s file");
             case 11:
                 File f = new File(msg.getContent());
                 byte[] fileBytes = Files.readAllBytes(f.toPath());
@@ -138,7 +144,6 @@ public class Server extends Thread
                 Message message = new Message(1,msg.getTarget(),f.getName()+"%"+fileBytes.length);
                 send(message,sender);
                 clients.get(msg.getTarget()).addBitToFileList(sender,msg);
-
                 break;
         }
 
