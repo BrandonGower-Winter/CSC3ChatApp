@@ -53,7 +53,7 @@ public class ClientApplication
         String toSend = input.nextLine();
         out.writeUTF(toSend);
 
-    /*    switch(11)
+       /* switch(11)
         {
           case 11:
             File f = new File(toSend.getContent());
@@ -75,8 +75,8 @@ public class ClientApplication
                 fileData += Base64.getEncoder().encodeToString(Arrays.copyOfRange(fileBytes,16000*(i),fileBytes.length));
               }
               //System.out.println("Data being sent:\n" + fileData);
-              toSend.setContent(fileData);
-              out.writeUTF(toSend.toString());
+              toSend.setContent(fileData); i am here
+              out.writeUTF(toSend.toString()); 
             }
             out.writeUTF("1|"+toSend.getTarget()+"|"+f.getName()+"%"+fileBytes.length);
             break;
@@ -193,7 +193,12 @@ public class ClientApplication
       out.writeUTF("0|"+target+"|"+text);
   }
 
-  public static void addGroupMember(String text) throws IOException {
+  static void addGroupMember(String text) throws IOException {
     out.writeUTF("7|*"+text);
   }
+
+  static void sendFile(String selectedUser, File file) throws IOException {
+    out.writeUTF("11|"+selectedUser+"|"+file.getAbsolutePath());
+  }
+
 }

@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
@@ -242,9 +243,8 @@ public class Controller1 {
 
 
 
-    File file;                                     //chosen file and to be sent
-    @FXML void upload()
-    {
+                                         //chosen file and to be sent
+    @FXML void upload() throws IOException {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Select file");
         fileChooser.setInitialDirectory(
@@ -252,9 +252,15 @@ public class Controller1 {
         );
         File file = fileChooser.showOpenDialog(Main.stage);
         Desktop.getDesktop();
+        if (file!=null && file.exists())
+        {
+            System.out.println("File to be sent to: "+selectedUser+" is at: "+file.getAbsolutePath());
+            ClientApplication.sendFile(selectedUser,file);
+            byte[] fileBytes = Files.readAllBytes(file.toPath());
+        }
 
-        //TODO send file
-        System.out.println("File to be sent to: "+selectedUser+"is at: "+file.getAbsolutePath());
+        else
+            System.out.println("No file found to be sent to the user: "+selectedUser);
 
     }
 

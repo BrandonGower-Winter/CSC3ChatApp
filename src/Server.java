@@ -5,6 +5,9 @@
 
 import java.net.*;
 import java.io.*;
+import java.nio.file.Files;
+import java.util.Arrays;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Scanner;
 
@@ -106,6 +109,35 @@ public class Server extends Thread
                 break;
             case 9:
                 multiUsers.groupMessage(msg,clients,sender);
+                break;
+
+            case 11:
+                File f = new File(msg.getContent());
+                byte[] fileBytes = Files.readAllBytes(f.toPath());
+                System.out.println("Sending file: "+fileBytes.length);
+                int partsToSend = (int)Math.ceil(fileBytes.length/(double)16000);
+                System.out.println("File will be sent in " + partsToSend + " parts");
+
+                for(int i = 0; i < partsToSend; i++)
+                {
+                    String fileData = f.getName() + "%" + fileBytes.length + "%" + (i+1) + "%";
+                    if(i+1 != partsToSend)
+                {
+                    //fileData+= Arrays.copyOfRange(fileBytes,16000*(i),16000*(i+1)).length;
+                    fileData += Base64.getEncoder().encodeToString(Arrays.copyOfRange(fileBytes,16000*(i),16000*(i+1)));
+                }
+                else
+                {
+                    //fileData+= Arrays.copyOfRange(fileBytes,16000*(i),fileBytes.length).length;
+                    fileData += Base64.getEncoder().encodeToString(Arrays.copyOfRange(fileBytes,16000*(i),fileBytes.length));
+                }
+                msg.setContent(fileData);
+                //send(msg,sender);
+                }
+
+                Message message = new Message(1,msg.getTarget(),f.getName()+"%"+fileBytes.length);
+                send(message,sender);
+
                 break;
         }
 

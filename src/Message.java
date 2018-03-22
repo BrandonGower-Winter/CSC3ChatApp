@@ -45,4 +45,7 @@ public class Message
     target = t;
   }
 
+  public void setContent(String content) {
+    this.content = content;
+  }
 }
