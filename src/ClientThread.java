@@ -30,7 +30,9 @@ public class ClientThread extends Thread
         switch(msg.getCommand())
         {
           case 0:
+            if(msg.getTarget().compareToIgnoreCase("server") == 0)
             Controller1.receiveMessage(msg.getTarget(),"\n"+msg.getTarget()+": "+msg.getContent());
+            JOptionPane.showMessageDialog(null,msg.getContent(),"Message from server:",JOptionPane.INFORMATION_MESSAGE);
                 break;
           case 50:
                 notifyClientLoginStatus(msg);

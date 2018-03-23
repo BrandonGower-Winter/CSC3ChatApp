@@ -1,5 +1,21 @@
 # CSC3ChatApp
 Chat App for CSC3002F
+Developers:
+Brandon Gower-Winter
+Solomon Malesa
+Jason Pietersen
+
+
+#Requirements
+64 bit system
+IntelliJ with JavaFx Scene builder 2.0 installed and set up under Settings/Languages and Frameworks/JavaFX.
+
+#NOTE !!!!
+
+By default the server launches on port 4444
+The client looks for 'localhost' on port 4444
+
+These settings can be changed from the user preferences file (located in resources/)
 
 Guest logins available:
   Username: guest1, guest2, guest3
@@ -14,7 +30,9 @@ Code 0: simple communication between 2 clients and if target is "all", a broadca
 
         format: 0|<target>|<content>
 
-Code 1: //reserved for file transfers
+Code 1: Sending file bit
+
+        format: 1|<target>|<fileName%totalfilesize>
 
 Code 2: registering a user to a local pseudo-database
 
