@@ -39,9 +39,8 @@ public class Controller1 {
         Main.stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
             @Override
             public void handle(WindowEvent event) {
-                ClientApplication.logOut(Bridge.user,Bridge.pass);
                 logData();
-                System.exit(0);
+                officialExit();
             }
         });
 
@@ -428,5 +427,11 @@ public class Controller1 {
                 button.setStyle("-fx-background-color: violet;");
             }
         });
+    }
+
+    static void officialExit()
+    {
+        ClientApplication.logOut(Bridge.user,Bridge.pass);
+        System.exit(0);
     }
 }

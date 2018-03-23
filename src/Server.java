@@ -92,7 +92,10 @@ public class Server extends Thread
                 break;
 
             case 4:
+                System.out.println("Client requested to leave");
                 multiUsers.logout(msg,clients,sender);
+                System.out.println("Client left***");
+                clients.remove(sender);
                 break;
 
             case 5:
