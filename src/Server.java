@@ -82,7 +82,10 @@ public class Server extends Thread
                 if(multiUsers.isFriend(sender,msg.getTarget()))
                 {
                     System.out.println("User: @" + sender + " is sending a file to " +msg.getTarget());
-                    clients.get(msg.getTarget()).sendFilePermissionMessage(msg,sender);
+                    if (clients.containsKey(msg.getTarget()))
+                        clients.get(msg.getTarget()).sendFilePermissionMessage(msg,sender);
+                    else
+                        clients.get(sender).sendToSocket(new Message(0,"","0"),"0000");         //0000 is code for target client is offline
                 }
                 else
                     System.out.println(sender + " attempted to message " + msg.getTarget() + " but they are not friends.");

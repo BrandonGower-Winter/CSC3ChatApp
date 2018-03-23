@@ -3,7 +3,11 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.HashMap;
 
 
 public class Controller2 {
@@ -24,10 +28,52 @@ public class Controller2 {
         c.clear();
     }
 
-    @FXML public void logout(ActionEvent event) {
-        //TODO Save data and notify other clients that user has gone offline
+    @FXML public void logout(ActionEvent event)
+    {
         Platform.exit();
-        System.exit(0);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                logData();
+            }
+        }).start();
+    }
+    static void logData()
+    {
+        HashMap<String, String> hashMap = Controller1.tempHist;
+
+        try
+        {
+            FileWriter userFile = new FileWriter("./resources/chats"+Bridge.user+"data",false);
+            BufferedWriter userFileBuffer = new BufferedWriter(userFile);
+            PrintWriter printer = new PrintWriter(userFileBuffer);
+
+            for(String user : hashMap.keySet())
+            {
+                if (user.contains("*"))
+                {
+                    printer.print("##$"+user+hashMap.get(user)+"\n");
+                }
+
+                else if (user.contains("Broadcast"))
+                {
+                    printer.print("##^"+user+hashMap.get(user)+"\n");
+                }
+                else
+                {
+                    printer.print("##@"+user+hashMap.get(user)+"\n");
+                }
+
+            }
+
+            printer.close();
+            userFileBuffer.close();
+            userFile.close();
+        }
+        catch(IOException e)
+        {
+            e.printStackTrace();
+        }
     }
 
 }
