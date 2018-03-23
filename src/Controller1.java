@@ -81,15 +81,15 @@ public class Controller1 {
 
 
         groupList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            switcher(newValue.getText());
+            switcher(observable.getValue().getText());
         });
 
         chatsList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            switcher(newValue.getText());
+            switcher(observable.getValue().getText());
         });
 
         contactsList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            switcher(newValue.getText());
+            switcher(observable.getValue().getText());
         });
 
 
