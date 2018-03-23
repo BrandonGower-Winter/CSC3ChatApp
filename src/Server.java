@@ -181,7 +181,7 @@ public class Server extends Thread
     public static void main(String[] args)
     {
         int port;
-        if(args.length > 1)
+        if(args.length < 0)
         {
           port = Integer.parseInt(args[0]);
         }
