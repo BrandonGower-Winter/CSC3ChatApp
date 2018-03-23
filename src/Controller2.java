@@ -3,7 +3,11 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.HashMap;
 
 
 public class Controller2 {
@@ -24,10 +28,22 @@ public class Controller2 {
         c.clear();
     }
 
-    @FXML public void logout(ActionEvent event) {
-        //TODO Save data and notify other clients that user has gone offline
+    @FXML public void logout(ActionEvent event)
+    {
         Platform.exit();
-        System.exit(0);
+        Thread thread =
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Controller1.logData();
+            }
+        });
+        thread.start();
+        try {
+            thread.join();
+            System.exit(0);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
-
 }
