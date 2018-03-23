@@ -73,22 +73,37 @@ public class Server extends Thread
                 break;
 
             case 1:
-                System.out.println("File Recieved");
                 //System.out.println(msg.getContent());
                 //Store data in serverclient thread
                 //Ask client if they want to receive file
                 //if no delete data.
                 //if yes send data.
-                if(multiUsers.isFriend(sender,msg.getTarget()))
+                if (PseudoDatabase.groupData.containsKey(msg.getTarget()))
                 {
-                    System.out.println("User: @" + sender + " is sending a file to " +msg.getTarget());
-                    if (clients.containsKey(msg.getTarget()))
-                        clients.get(msg.getTarget()).sendFilePermissionMessage(msg,sender);
-                    else
-                        clients.get(sender).sendToSocket(new Message(0,"","0"),"0000");         //0000 is code for target client is offline
+
+                    for (String string: PseudoDatabase.groupData.get(msg.getTarget()))
+                    {
+                        if (string.compareTo(sender)!=0)
+                            if (clients.containsKey(string))       //sending to online users
+                            {
+                                clients.get(string).sendFilePermissionMessage(msg,sender);
+                            }
+                    }
                 }
                 else
-                    System.out.println(sender + " attempted to message " + msg.getTarget() + " but they are not friends.");
+                    {
+                        if(multiUsers.isFriend(sender,msg.getTarget()))
+                        {
+                            System.out.println("User: @" + sender + " is sending a file to " +msg.getTarget());
+                            if (clients.containsKey(msg.getTarget()))
+                                clients.get(msg.getTarget()).sendFilePermissionMessage(msg,sender);
+                            else
+                                clients.get(sender).sendToSocket(new Message(0,"","0"),"0000");         //0000 is code for target client is offline
+                        }
+                        else
+                            System.out.println(sender + " attempted to message " + msg.getTarget() + " but they are not friends.");
+                    }
+
                 break;
 
             case 4:
@@ -127,7 +142,17 @@ public class Server extends Thread
                     clients.get(sender).sendFile(msg.getTarget(),false);
                 //System.out.println("Sender is denying " + msg.getTarget() + "'s file");
             case 11:
-                clients.get(msg.getTarget()).addBitToFileList(sender,msg);
+                if (PseudoDatabase.groupData.containsKey(msg.getTarget()))
+                {
+                    for (String string: PseudoDatabase.groupData.get(msg.getTarget()))
+                    {
+                        if (string.compareTo(sender)!=0)
+                            if (clients.containsKey(string))      //sending to online users and not to sending user
+                                clients.get(string).addBitToFileList(sender,msg);
+                    }
+                }
+                else
+                    clients.get(msg.getTarget()).addBitToFileList(sender,msg);
                 break;
             case 12:
                 //accept or deny friend request.

@@ -7,7 +7,7 @@ public class PseudoDatabase {
 
     //Used in database
     public static HashMap<String,ArrayList<String>> userData = new HashMap<>(0);
-    private HashMap<String,ArrayList<String>> groupData = new HashMap<>(0);
+    public static HashMap<String,ArrayList<String>> groupData = new HashMap<>(0);
 
     PseudoDatabase()
     {

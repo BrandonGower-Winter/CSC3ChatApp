@@ -92,6 +92,7 @@ class MultiUsers extends Thread
         new Thread(() -> {
                 for(String member : database.getGroupData().get(msg.getTarget()))
                 {
+                    System.out.println("on the server: "+member+" redirecting to :"+msg.getTarget());
                     if(clients.containsKey(member) && member.compareTo(sender) != 0)
                     {
                         clients.get(member).sendToSocket(new Message(0,msg.getTarget(),"(" +sender +") "+ msg.getContent()),msg.getTarget());
