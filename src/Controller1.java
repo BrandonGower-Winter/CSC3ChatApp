@@ -1,5 +1,6 @@
 import com.jfoenix.controls.*;
 import com.jfoenix.transitions.hamburger.HamburgerSlideCloseTransition;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
@@ -7,7 +8,9 @@ import javafx.scene.control.Tab;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
+import org.omg.CORBA.CODESET_INCOMPATIBLE;
 
 import java.awt.*;
 import java.io.File;
@@ -37,7 +40,7 @@ public class Controller1 {
     static HashMap<String, String> tempHist = new HashMap<>(0);
 
 
-    String selectedUser="";
+    static String selectedUser="";
 
     @FXML public void initialize()
     {
@@ -122,6 +125,7 @@ public class Controller1 {
     }
 
     void switcher(String selected){
+        sendingArea.clear();
 
         selectedUser = selected;
         chatSpace.setText("");
@@ -203,32 +207,30 @@ public class Controller1 {
                 }
             }
         }
-
-
         setChats();
     }
 
 
-    @FXML public void messaging() throws IOException {
-        if (sendingArea.getText().length()>0)
-        {
-            ClientApplication.message(selectedUser,sendingArea.getText());
-            chatSpace.appendText("\nMe: "+sendingArea.getText());
-            tempHist.replace(selectedUser,chatSpace.getText());
-            sendingArea.clear();
-        }
-        setChats();
-    }
+
 
 
     static void receiveMessage(String text, String text1)
     {
         JFXButton button = ((JFXButton)(Main.stage.getScene().getRoot().lookup("#headerInfo")));
-        button.setStyle("-fx-background-color: red;");
-        if (tempHist.containsKey(text))
-        {
-            tempHist.replace(text,tempHist.get(text)+text1);
+
+        if ((text1.contains("Group already exists!"))) {
+            Platform.runLater(() -> {
+                button.setText("Group already exists!");
+                button.setStyle("-fx-background-color: white;");
+            });
+            return;         //its important not to move this line
         }
+
+        button.setStyle("-fx-background-color: red;");
+        Platform.runLater(() -> button.setText("New Message from: "+text));
+
+        if (tempHist.containsKey(text))
+            tempHist.replace(text,tempHist.get(text)+text1);
 
 
         if (text.substring(0,1).compareTo("*")==0 && !tempHist.containsKey(text))
@@ -239,28 +241,103 @@ public class Controller1 {
                 tempHist.put((text),text1);
             }
         }
+
+        if (selectedUser.compareTo(text)==0)
+            Platform.runLater(() ->
+            {
+                JFXTextArea textArea = (JFXTextArea)Main.stage.getScene().getRoot().lookup("#chatSpace");
+                textArea.appendText(text1);
+            });
+
+
+        if ((text.compareTo("0000")==0))
+            Platform.runLater(() -> {
+                button.setText("Offline at the moment... :(");
+                button.setStyle("-fx-background-color: white;");
+            });
+        else if ((text.compareTo("0001")==0))
+        {
+            Platform.runLater(() -> {
+                button.setText("You were friends before now... :)");
+                button.setStyle("-fx-background-color: white;");
+            });
+        }
+        else if ((text.compareTo("0002")==0))
+        {
+            Platform.runLater(() -> {
+                button.setText("Successfully added...");
+                button.setStyle("-fx-background-color: blue;");
+            });
+        }
+        else if ((text.compareTo("0003")==0))
+        {
+            Platform.runLater(() -> {
+                button.setText("Username not found in our servers :(");
+                button.setStyle("-fx-background-color: white;");
+            });
+        }
+        else if ((text.compareTo("0004")==0))
+        {
+            Platform.runLater(() -> {
+                button.setText(text1.substring(text1.indexOf(":")+1)+" has added you as their friend! (click to refresh)");
+                button.setStyle("-fx-background-color: blue;");
+            });
+        }
+
+        else if (text1.contains("GROUP"))
+        {
+            Platform.runLater(() -> {
+                button.setText(text1.substring(0,text1.indexOf(":")+1)+" is a new group! (click to refresh)");
+                button.setStyle("-fx-background-color: blue;");
+            });
+        }
+    }
+
+    @FXML public void messaging() throws IOException {
+        if (selectedUser.length()>0)    //ensures that user has selected a target
+        {
+            if (sendingArea.getText().length()>0)
+            {
+                Platform.runLater(() ->
+                        {
+                            Main.stage.getScene().getRoot().lookup("#headerInfo").setStyle("-fx-background-color: orange;");
+                            ((JFXButton)Main.stage.getScene().getRoot().lookup("#headerInfo")).setText("Chatting with: "+selectedUser);
+                        });
+                ClientApplication.message(selectedUser,sendingArea.getText());
+                chatSpace.appendText("\nMe: "+sendingArea.getText());
+                tempHist.replace(selectedUser,chatSpace.getText());
+                sendingArea.clear();
+            }
+            setChats();
+        }
+        else
+        {
+            sendingArea.clear();
+            sendingArea.setPromptText("Please select a person you want to send a message to");
+        }
     }
 
 
-
-                                         //chosen file and to be sent
     @FXML void upload() throws IOException {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Select file");
-        fileChooser.setInitialDirectory(
-                new File(System.getProperty("user.home"))
-        );
-        File file = fileChooser.showOpenDialog(Main.stage);
-        Desktop.getDesktop();
-        if (file!=null && file.exists())
+        if (selectedUser.length()>0)                    //Ensures that user cannot upload file to unselected user which throws as exception in the server if not handled
         {
-            System.out.println("File to be sent to: "+selectedUser+" is at: "+file.getAbsolutePath());
-            ClientApplication.sendFile(selectedUser,file);
-            byte[] fileBytes = Files.readAllBytes(file.toPath());
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Select file");
+            fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+            File file = fileChooser.showOpenDialog(Main.stage);
+            Desktop.getDesktop();
+            if (file!=null && file.exists())
+            {
+                ClientApplication.sendFile(selectedUser,file);
+                ClientApplication.message(selectedUser,"(SENT YOU A FILE: "+file.getName()+")");
+                chatSpace.appendText("\nFILE SENT");
+                tempHist.replace(selectedUser,chatSpace.getText());
+            }
+
+            else
+                System.out.println("No file found to be sent to the user: "+selectedUser);
         }
 
-        else
-            System.out.println("No file found to be sent to the user: "+selectedUser);
 
     }
 

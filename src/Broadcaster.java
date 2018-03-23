@@ -1,7 +1,5 @@
 import java.util.HashMap;
-/**
- * Need to clean up and optimize
- * */
+
 public class Broadcaster extends Thread{
     private MultiUsers userBase;
     private HashMap<String, ServerClientThread> clients;

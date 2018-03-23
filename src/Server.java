@@ -6,10 +6,7 @@
 import java.net.*;
 import java.io.*;
 import java.nio.file.Files;
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.Scanner;
+import java.util.*;
 
 public class Server extends Thread
 {
@@ -65,7 +62,12 @@ public class Server extends Thread
                 if (msg.getTarget().compareTo("all")==0)    //sends message to all users the sender is friends with.
                     new Broadcaster(multiUsers,clients,msg,sender,false).start();
                 else if(multiUsers.isFriend(sender,msg.getTarget()))
-                    clients.get(msg.getTarget()).sendToSocket(msg,sender);
+                {
+                    if (clients.containsKey(msg.getTarget()))
+                        clients.get(msg.getTarget()).sendToSocket(msg,sender);
+                    else
+                        clients.get(sender).sendToSocket(new Message(0,"","0"),"0000");         //0000 is code for target client is offline
+                }
                 else
                     System.out.println(sender + " attempted to message " + msg.getTarget() + " but they are not friends.");
                 break;
@@ -91,7 +93,23 @@ public class Server extends Thread
                 break;
 
             case 5:
-                multiUsers.addFriend(msg,clients,sender);
+                switch (multiUsers.addFriend(msg,clients,sender))
+                {
+                    case 0:
+                        clients.get(sender).sendToSocket(new Message(0,"","0"),"0001");
+                        break;
+                    case 1:
+                        clients.get(sender).sendToSocket(new Message(0,"","0"),"0002");
+
+                        if (clients.containsKey(msg.getContent()))              //does not send notification if user is offline
+                            clients.get(msg.getContent()).sendToSocket(new Message(0,sender,sender),"0004");
+                        break;
+
+                    default:
+                        clients.get(sender).sendToSocket(new Message(0,"","0"),"0003");
+                        break;
+                }
+
                 break;
 
             case 6:
@@ -118,7 +136,6 @@ public class Server extends Thread
                     clients.get(sender).sendFile(msg.getTarget(),false);
                 //System.out.println("Sender is denying " + msg.getTarget() + "'s file");
             case 11:
-
                 File f = new File(msg.getContent());
                 if (f.exists())
                 {

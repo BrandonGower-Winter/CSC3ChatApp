@@ -15,7 +15,7 @@ public class ServerClientThread extends Thread
     this.clientName = "UNDEFINED";
     this.serverClientConnection = socket;
     this.server = server;
-    fileBuffer = new HashMap<String,ArrayList<String>>();
+    fileBuffer = new HashMap<>();
   }
 
   public void run()

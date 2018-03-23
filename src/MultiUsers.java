@@ -31,9 +31,9 @@ class MultiUsers extends Thread
             clients.get(sender).sendToSocket(new Message(4,sender,"FAILED TO LOGOUT!"),sender);
     }
 
-    synchronized void addFriend(Message msg, HashMap<String, ServerClientThread> clients, String sender)
+    synchronized int addFriend(Message msg, HashMap<String, ServerClientThread> clients, String sender)
     {
-        database.addFriend(msg.getTarget(),msg.getContent());
+        return (database.addFriend(msg.getTarget(),msg.getContent()));
     }
 
 
@@ -43,7 +43,7 @@ class MultiUsers extends Thread
     }
 
 
-    synchronized void createGroup(Message msg, HashMap<String, ServerClientThread> clients, String sender) throws IOException {
+    synchronized int createGroup(Message msg, HashMap<String, ServerClientThread> clients, String sender) throws IOException {
        ArrayList<String> res = database.createGroup(msg.getTarget(),msg.getContent(), sender);
 
        if (res.size()!=0)
@@ -51,11 +51,18 @@ class MultiUsers extends Thread
            StringBuilder string = new StringBuilder();
            for (String s: res)
                string.append(s).append(", ");
-           System.out.println("GROUP: "+msg.getTarget()+" HAS BEEN CREATED BY "+sender+" AND HAS THE FOLLOWING MEMBERS: "+string);
+
            for (String s: res)
-               if (clients.containsKey(s))
-                   clients.get(s).sendToSocket(new Message(0,s,"GROUP: "+msg.getTarget()+" HAS BEEN CREATED BY "+sender+" AND HAS THE FOLLOWING MEMBERS: "+string),msg.getTarget());
+               if (clients.containsKey(s)) {
+                   clients.get(s).sendToSocket(new Message(0,"","(GROUP HAS BEEN CREATED BY "+sender+" AND HAS THE FOLLOWING MEMBERS: "+string+")\n\n"),msg.getTarget());
+               }
        }
+       else
+       {
+           clients.get(sender).sendToSocket(new Message(0,"","Group already exists!")," Group already exists!");
+       }
+
+       return 0;
     }
 
 
