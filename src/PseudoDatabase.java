@@ -263,7 +263,7 @@ public class PseudoDatabase {
         {
             groupData.get(groupName).add(mem);
             reWriteGroupFile();
-            return (String[]) groupData.get(groupName).toArray();
+            return groupData.get(groupName).toArray(new String[0]);
         }
         else
         {
