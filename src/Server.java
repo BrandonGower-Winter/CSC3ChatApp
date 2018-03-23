@@ -5,12 +5,13 @@
 * @author Brandon
 */
 
-import javafx.scene.control.Label;
-
-import java.net.*;
-import java.io.*;
-import java.nio.file.Files;
-import java.util.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.HashMap;
+import java.util.Scanner;
 
 public class Server extends Thread
 {
