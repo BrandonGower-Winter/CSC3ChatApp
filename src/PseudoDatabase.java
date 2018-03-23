@@ -95,9 +95,13 @@ public class PseudoDatabase {
 
     synchronized int addFriend(String user, String friend)
     {
+
         if (isFriend(user,friend))
+        {
+            System.out.println((user + " and " + friend + " are already friends."));
             return 0;
-        else if (!isFriend(user,friend) && userExists(friend))
+        }
+        else if (!isFriend(user,friend))
         {
             userData.get(user).add(friend);
             userData.get(friend).add(user);//what if user is offline
@@ -125,6 +129,7 @@ public class PseudoDatabase {
 
     synchronized boolean isFriend(String user, String friend)
     {
+        /*
         try {
             Scanner scanner = new Scanner(new FileInputStream("./resources/friends"));
             while (scanner.hasNextLine())
@@ -142,6 +147,14 @@ public class PseudoDatabase {
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
+        }*/
+        for(int i = 0; i < userData.get(user).size(); i++)
+        {
+            if(i != 0 && i != 1)
+            {
+                if(userData.get(user).get(i).compareTo(friend) == 0)
+                    return true;
+            }
         }
         return false;
     }

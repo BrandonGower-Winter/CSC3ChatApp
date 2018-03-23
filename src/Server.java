@@ -93,23 +93,8 @@ public class Server extends Thread
                 break;
 
             case 5:
-                switch (multiUsers.addFriend(msg,clients,sender))
-                {
-                    case 0:
-                        clients.get(sender).sendToSocket(new Message(0,"","0"),"0001");
-                        break;
-                    case 1:
-                        clients.get(sender).sendToSocket(new Message(0,"","0"),"0002");
-
-                        if (clients.containsKey(msg.getContent()))              //does not send notification if user is offline
-                            clients.get(msg.getContent()).sendToSocket(new Message(0,sender,sender),"0004");
-                        break;
-
-                    default:
-                        clients.get(sender).sendToSocket(new Message(0,"","0"),"0003");
-                        break;
-                }
-
+                //Send friend request offer
+                clients.get(msg.getContent()).sendToSocket(new Message(53,sender,"VOID"),sender);
                 break;
 
             case 6:
@@ -137,6 +122,28 @@ public class Server extends Thread
                 //System.out.println("Sender is denying " + msg.getTarget() + "'s file");
             case 11:
                 clients.get(msg.getTarget()).addBitToFileList(sender,msg);
+                break;
+            case 12:
+                //accept or deny friend request.
+                if(msg.getContent().compareTo("1") == 0) {
+                    return;
+                }
+                switch (multiUsers.addFriend(msg,clients,sender))
+                {
+                    case 0:
+                        clients.get(msg.getTarget()).sendToSocket(new Message(0,"","0"),"0001");
+                        break;
+                    case 1:
+                        clients.get(msg.getTarget()).sendToSocket(new Message(0,"","0"),"0002");
+
+                        if (clients.containsKey(msg.getContent()))              //does not send notification if user is offline
+                            clients.get(msg.getContent()).sendToSocket(new Message(0,sender,sender),"0004");
+                        break;
+
+                    default:
+                        clients.get(msg.getTarget()).sendToSocket(new Message(0,"","0"),"0003");
+                        break;
+                }
                 break;
         }
 

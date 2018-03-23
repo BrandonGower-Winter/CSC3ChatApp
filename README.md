@@ -60,6 +60,14 @@ Code 11: Send file bit:
 
     format 11|<target>|<file bit>
 
+Code 12: Friend Request Confrimation
+
+    format: 11|friend request sender|friend request status
+
+    friend request status:
+            0: yes
+            1: no
+
 Code 50: Confirm user login status
 
     format: 50|<user>|<login status>
@@ -77,3 +85,7 @@ Code 51: Send user file status
 Code 52: Send user file
     
     format 52|sender|<filename>%<file size>%<file part>%<filedata>
+
+Code 53: Friend Request (Special Case)
+
+    format: 53|sender

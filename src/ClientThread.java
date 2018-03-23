@@ -72,6 +72,17 @@ public class ClientThread extends Thread
               out.close();
               filesToWrite.remove(msg.getTarget());
             }
+            break;
+          case 53:
+            if(JOptionPane.showConfirmDialog(null,"@" + msg.getTarget() + " wants to add you as a friend. Do you accept?","Friend Request",JOptionPane.YES_NO_OPTION)==0)
+            {
+              sendFriendRequestConfirmation(msg.getTarget(),true);
+            }
+            else
+            {
+              sendFriendRequestConfirmation(msg.getTarget(),false);
+            }
+            break;
         }
         //Ignore this.
         if(msg.getContent().compareTo("exit") == 0)
@@ -98,6 +109,26 @@ public class ClientThread extends Thread
       else
       {
         out.writeUTF("10|"+target+"|1");
+      }
+    }
+    catch(IOException e)
+    {
+      e.printStackTrace();
+    }
+  }
+
+  private void sendFriendRequestConfirmation(String target, boolean accepted)
+  {
+    try
+    {
+      DataOutputStream out = new DataOutputStream(client.getOutputStream());
+      if(accepted)
+      {
+        out.writeUTF("12|"+target+"|0");
+      }
+      else
+      {
+        out.writeUTF("12|"+target+"|1");
       }
     }
     catch(IOException e)

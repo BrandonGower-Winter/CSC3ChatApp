@@ -33,7 +33,7 @@ class MultiUsers extends Thread
 
     synchronized int addFriend(Message msg, HashMap<String, ServerClientThread> clients, String sender)
     {
-        return (database.addFriend(msg.getTarget(),msg.getContent()));
+        return (database.addFriend(msg.getTarget(),sender));
     }
 
 

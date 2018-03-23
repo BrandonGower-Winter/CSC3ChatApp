@@ -1,4 +1,4 @@
-guest3|guest2
-Brandon|guest1
+guest3|guest2,Brandon
+Brandon|guest1,guest3
 guest2|guest1,guest3
-guest1|guest2
+guest1|guest2,Brandon
