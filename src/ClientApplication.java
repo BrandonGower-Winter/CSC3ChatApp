@@ -24,8 +24,20 @@ public class ClientApplication
     int port;
     if(args.length < 2)
     {
-      serverName = "localhost";
-      port = 4444;
+      try
+      {
+        Scanner scPrefer = new Scanner(new File("./resources/preferences"));
+        port = Integer.parseInt(scPrefer.nextLine());
+        serverName = scPrefer.next();
+        System.out.println("Connecting to server "+ serverName +" on port: " + port);
+        scPrefer.close();
+      }
+      catch(FileNotFoundException e)
+      {
+        System.out.println("No user preferences found. Setting port to 4444 and server name to localhost.");
+        port = 4444;
+        serverName = "localhost";
+      }
     }
     else
     {

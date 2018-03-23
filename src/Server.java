@@ -157,7 +157,19 @@ public class Server extends Thread
         }
         else
         {
-          port = 4444;
+            try
+            {
+                Scanner scPrefer = new Scanner(new File("./resources/preferences"));
+                port = Integer.parseInt(scPrefer.nextLine());
+                System.out.println("Creating server on port: " + port);
+                scPrefer.close();
+            }
+            catch(FileNotFoundException e)
+            {
+                System.out.println("No server preferences found. Setting to port to 4444");
+                port = 4444;
+            }
+
         }
         try
         {
