@@ -71,6 +71,9 @@ public class PseudoDatabase {
     {
         if (userData.containsKey(name) && userData.get(name).get(0).compareTo(password)==0)
         {
+            if(userData.get(name).get(1).compareTo("1") == 0)
+                return false;
+
             userData.get(name).set(1,"1");
             return true;
         }
