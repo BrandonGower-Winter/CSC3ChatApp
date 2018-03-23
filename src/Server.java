@@ -188,7 +188,7 @@ public class Server extends Thread
                     String friends="";
                     for (int x =2; x< MultiUsers.database.getUserData().get(msg.getTarget()).size(); x++)
                     {
-                        friends += MultiUsers.database.getUserData().get(msg.getTarget()).get(x)+",";
+                        friends += MultiUsers.database.getUserData().get(msg.getTarget()).get(x)+"@";
                     }
                     clients.get(msg.getTarget()).sendToSocket(new Message(0,"",friends),"1000");
 
@@ -197,7 +197,7 @@ public class Server extends Thread
                     for (String string: MultiUsers.database.getGroupData().keySet())
                     {
                         if (MultiUsers.database.getGroupData().get(string).contains(msg.getTarget()))
-                            group+=string;
+                            group+=string+"@";
                     }
                     clients.get(msg.getTarget()).sendToSocket(new Message(0,"",group),"1001");
 

@@ -48,24 +48,9 @@ public class Controller1 {
         contactsList.getItems().add(new Label("Broadcast"));
         tempHist.put("Broadcast","");
 
-        //start at 2 because 0 and 1 are reserved for user status and password
-        for (int x =2; x< MultiUsers.database.getUserData().get(Bridge.user).size(); x++){
-            String string = MultiUsers.database.getUserData().get(Bridge.user).get(x);
-            contactsList.getItems().add(new Label(string));
-            tempHist.put(string,"");
-        }
-
 
         groups = new Tab("Groups");
         groups.setContent(groupList);
-
-        for (String string: MultiUsers.database.getGroupData().keySet())
-        {
-            if (MultiUsers.database.getGroupData().get(string).contains(Bridge.user))
-                groupList.getItems().add(new Label(string));
-        }
-
-        groupList.setId("groupFXMLelement");
 
         chats = new Tab("Chats");
         chats.setContent(chatsList);
@@ -110,6 +95,7 @@ public class Controller1 {
         }
 
         headerInfo.setText("Welcome "+Bridge.user+"!");
+        refresh();
     }
 
 
@@ -163,29 +149,28 @@ public class Controller1 {
     @FXML void refresh()
     {
 
-        //handles friend additions
-        try {
-            Scanner scanner = new Scanner(new FileInputStream("resources/friends"));
-            while (scanner.hasNextLine()){
-                String string = scanner.nextLine();
-                if (string.substring(0,string.indexOf("|")).compareTo(Bridge.user)==0)
+        //TODO add new friends
+        for (String string: tempHist.keySet())
+        {
+            if (string.substring(0,1).compareTo("*")!=0)
+            {
                 {
-                    string = string.substring(string.indexOf("|")+1);
-                    String[] strings = string.split(",");
-                    for (String s: strings)
+                    boolean Nomatch = true;
+                    for (Label label: contactsList.getItems())
                     {
-                        if (!tempHist.containsKey(s))
+                        if (label.getText().compareTo(string)==0)
                         {
-                            tempHist.put(s,"");
-                            contactsList.getItems().add(new Label(s));
-                            headerInfo.setStyle("-fx-background-color: green");
-                            headerInfo.setText("Added new friends");
+                            Nomatch = false;
                         }
+                    }
+
+                    if (Nomatch)
+                    {
+                        contactsList.getItems().add(new Label(string));
                     }
                 }
             }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
+
         }
 
 
@@ -310,12 +295,23 @@ public class Controller1 {
         else {
             if ((text.compareTo("1000")==0))
             {
-                System.out.println(text1);
+                String t = text1.substring(text1.indexOf(":")+2);
+                String users[] = t.split("@");
+                for (String sr: users)
+                {
+                    tempHist.put(sr,"");
+                }
+
             }
 
             else if ((text.compareTo("1001")==0))
             {
-                System.out.println(text1);
+                String t = text1.substring(text1.indexOf(":")+2);
+                String group[] = t.split("@");
+                for (String sr: group)
+                {
+                    tempHist.put(sr,"");
+                }
             }
         }
 
