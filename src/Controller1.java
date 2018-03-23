@@ -41,11 +41,6 @@ public class Controller1 {
             public void handle(WindowEvent event) {
                 ClientApplication.logOut(Bridge.user,Bridge.pass);
                 logData();
-                try {
-                    ClientApplication.message(selectedUser,"");//   *   *   *   *   *   *   *   *   *   *   *   *
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
                 System.exit(0);
             }
         });
