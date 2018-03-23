@@ -3,6 +3,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 
+/*
+*This class is used to manage user logins, passwords, groups and friendlists
+* @author Solomon
+ */
 public class PseudoDatabase {
 
     //Used in database
@@ -56,7 +60,7 @@ public class PseudoDatabase {
         System.out.println("Users database not found");
       }
     }
-
+    //Registers new user
     synchronized boolean register(String name, String password,boolean fromFile)
     {
         if (userData.containsKey(name))
@@ -76,7 +80,7 @@ public class PseudoDatabase {
     }
 
 
-
+    //Attempts user login
     synchronized boolean login(String name, String password)
     {
         if (userData.containsKey(name) && userData.get(name).get(0).compareTo(password)==0)
@@ -92,7 +96,7 @@ public class PseudoDatabase {
     }
 
 
-
+    //Attempts user logout
     synchronized boolean logout(String name, String password)
     {
         if (userData.containsKey(name) && userData.get(name).get(0).compareTo(password)==0){
@@ -105,7 +109,7 @@ public class PseudoDatabase {
     }
 
 
-
+    //Attempts to add to clients as friends (both ways)
     synchronized int addFriend(String user, String friend)
     {
 
@@ -139,7 +143,7 @@ public class PseudoDatabase {
       else
           return false;
     }
-
+    //Determine if two clients are friends
     synchronized boolean isFriend(String user, String friend)
     {
         /*
@@ -171,12 +175,12 @@ public class PseudoDatabase {
         }
         return false;
     }
-
+    //Determine is a client exists
     private synchronized boolean userExists(String user)
     {
         return userData.containsKey(user);
     }
-
+    //Creates a group and adds it to the persistend database
     synchronized ArrayList<String> createGroup(String name, String members, String owner) throws IOException {
         /*
         Scanner scanner = new Scanner(new FileInputStream("./resources/groups"));
@@ -219,7 +223,7 @@ public class PseudoDatabase {
         return membersList;
 
     }
-
+    //Crate group on server startup. Doesn't append to groups file
     private synchronized  void createGroup(String name, String members) //Specifically for server use
     {
         ArrayList<String> membersList  = new ArrayList<String>();
@@ -230,7 +234,7 @@ public class PseudoDatabase {
         }
         groupData.put(name,membersList);
     }
-
+    //Adds member to group and adds it to the groups file
     synchronized String[] addMem(String groupName, String owner, String mem) throws IOException {
         /*
         Scanner scanner = new Scanner(new FileInputStream("./resources/groups"));
@@ -272,7 +276,7 @@ public class PseudoDatabase {
     }
 
 
-
+    //get status of user in database
     synchronized String printStatus(String userName)
     {
         String string = "\n";
@@ -289,7 +293,7 @@ public class PseudoDatabase {
         return string;
     }
 
-
+    //Writes new user to the users file
     private void writeNewUser(String user, String password)
     {
       try
@@ -309,7 +313,7 @@ public class PseudoDatabase {
         e.printStackTrace();
       }
     }
-
+    //Writes new friend to the friends text file
     private void writeNewFriend()
     {
       try
@@ -354,7 +358,7 @@ public class PseudoDatabase {
       }
     }
 
-
+    //Writes new group to groups file
     private void writeNewGroup(String groupName, ArrayList<String> members)
     {
         try
@@ -385,7 +389,7 @@ public class PseudoDatabase {
         }
 
     }
-
+    //Rewrites the whole group file using the data in groupData
     private void reWriteGroupFile()
     {
         try
@@ -403,11 +407,11 @@ public class PseudoDatabase {
         }
 
     }
-
+    //Gets userdata hasMap
     public HashMap<String, ArrayList<String>> getUserData() {
         return userData;
     }
-
+    //Gets group data hashmap
     public HashMap<String, ArrayList<String>> getGroupData() {
         return groupData;
     }
