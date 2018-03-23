@@ -25,7 +25,7 @@ class MultiUsers extends Thread
         if (database.logout(msg.getTarget(),msg.getContent()))
         {
             clients.get(sender).sendToSocket(new Message(4,sender,"LOGGED OUT SUCCESSFULLY!"),sender);
-            clients.remove(sender).interrupt();
+            clients.remove(sender);
         }
         else
             clients.get(sender).sendToSocket(new Message(4,sender,"FAILED TO LOGOUT!"),sender);

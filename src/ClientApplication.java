@@ -173,6 +173,14 @@ public class ClientApplication
     else
       out.writeUTF("0|"+target+"|"+text);
   }
+  static void logOut(String user, String password)
+  {
+    try {
+      out.writeUTF("4|"+user+"|"+password);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
 
   static void addGroupMember(String text) throws IOException {
     out.writeUTF("7|*"+text);
