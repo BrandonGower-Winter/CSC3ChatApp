@@ -40,7 +40,6 @@ public class PseudoDatabase {
           scFriends.close();
         }
         scFriendsFile.close();
-        //Read group data here
       }
       catch(FileNotFoundException e)
       {

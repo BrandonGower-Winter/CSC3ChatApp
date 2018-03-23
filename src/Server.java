@@ -136,37 +136,7 @@ public class Server extends Thread
                     clients.get(sender).sendFile(msg.getTarget(),false);
                 //System.out.println("Sender is denying " + msg.getTarget() + "'s file");
             case 11:
-                File f = new File(msg.getContent());
-                if (f.exists())
-                {
-                    byte[] fileBytes = Files.readAllBytes(f.toPath());
-
-                    System.out.println("Sending file: "+fileBytes.length);
-                    int partsToSend = (int)Math.ceil(fileBytes.length/(double)16000);
-                    System.out.println("File will be sent in " + partsToSend + " parts");
-
-                    for(int i = 0; i < partsToSend; i++)
-                    {
-                        String fileData = f.getName() + "%" + fileBytes.length + "%" + (i+1) + "%";
-                        if(i+1 != partsToSend)
-                        {
-                            //fileData+= Arrays.copyOfRange(fileBytes,16000*(i),16000*(i+1)).length;
-                            fileData += Base64.getEncoder().encodeToString(Arrays.copyOfRange(fileBytes,16000*(i),16000*(i+1)));
-                        }
-                        else
-                        {
-                            //fileData+= Arrays.copyOfRange(fileBytes,16000*(i),fileBytes.length).length;
-                            fileData += Base64.getEncoder().encodeToString(Arrays.copyOfRange(fileBytes,16000*(i),fileBytes.length));
-                        }
-                        msg.setContent(fileData);
-                        clients.get(msg.getTarget()).addBitToFileList(sender,msg);
-                    }
-
-                    Message message = new Message(1,msg.getTarget(),f.getName()+"%"+fileBytes.length);
-                    send(message,sender);
-                    clients.get(msg.getTarget()).addBitToFileList(sender,msg);
-                }
-
+                clients.get(msg.getTarget()).addBitToFileList(sender,msg);
                 break;
         }
 

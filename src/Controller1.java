@@ -60,6 +60,31 @@ public class Controller1 {
         groups = new Tab("Groups");
         groups.setContent(groupList);
 
+
+        //bad programming practice
+        Scanner scanner = null;
+        try {
+            scanner = new Scanner(new FileInputStream("./resources/groups"));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        while (scanner.hasNextLine())
+        {
+            String string = scanner.nextLine();
+            String name = string.substring(0,string.indexOf("|"));
+            string = string.substring(string.indexOf("|")+1);
+            String[] strings = string.split(",");
+
+            for (String s: strings)
+            {
+                if (s.compareTo(Bridge.user)==0)
+                {
+                    groupList.getItems().add(new Label(name));
+                }
+            }
+
+        }
+
         groupList.setId("groupFXMLelement");
 
         chats = new Tab("Chats");
@@ -223,7 +248,7 @@ public class Controller1 {
                 button.setText("Group already exists!");
                 button.setStyle("-fx-background-color: white;");
             });
-            return;         //its important not to move this line
+            return;         //order matters for this block
         }
 
         button.setStyle("-fx-background-color: red;");
@@ -291,6 +316,17 @@ public class Controller1 {
                 button.setStyle("-fx-background-color: blue;");
             });
         }
+
+        if (text1.contains("Added a new member to the group:"))
+        {
+            System.out.println("heere");
+            Platform.runLater(() -> {
+                button.setText("new group member added (click to refresh)");
+                button.setStyle("-fx-background-color: blue;");
+            });
+            //order matters for this block
+        }
+
     }
 
     @FXML public void messaging() throws IOException {
