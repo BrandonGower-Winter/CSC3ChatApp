@@ -7,7 +7,7 @@ import java.io.*;
 
 public class PseudoDatabase {
 
-    //Used in database---
+    //Used in database
     public static HashMap<String,ArrayList<String>> userData = new HashMap<>(0);
     private HashMap<String,ArrayList<String>> groupData = new HashMap<>(0);
 
@@ -101,7 +101,7 @@ public class PseudoDatabase {
         else if (!isFriend(user,friend) && userExists(friend))
         {
             userData.get(user).add(friend);
-            userData.get(friend).add(user);
+            userData.get(friend).add(user);//what if user is offline
             System.out.println(user + " is now friends with " + friend);
             writeNewFriend();
             return 1;
