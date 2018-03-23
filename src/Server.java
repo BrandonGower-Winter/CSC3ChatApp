@@ -3,6 +3,8 @@
 *
 */
 
+import javafx.scene.control.Label;
+
 import java.net.*;
 import java.io.*;
 import java.nio.file.Files;
@@ -174,6 +176,31 @@ public class Server extends Thread
                     default:
                         clients.get(msg.getTarget()).sendToSocket(new Message(0,"","0"),"0003");
                         break;
+                }
+                break;
+
+            case 13:
+                //sends friends list
+
+                if (MultiUsers.database.getUserData().containsKey(msg.getTarget()))
+                {
+                    System.out.println("got here");
+                    String friends="";
+                    for (int x =2; x< MultiUsers.database.getUserData().get(msg.getTarget()).size(); x++)
+                    {
+                        friends += MultiUsers.database.getUserData().get(msg.getTarget()).get(x)+",";
+                    }
+                    clients.get(msg.getTarget()).sendToSocket(new Message(0,"",friends),"1000");
+
+
+                    String group = "";
+                    for (String string: MultiUsers.database.getGroupData().keySet())
+                    {
+                        if (MultiUsers.database.getGroupData().get(string).contains(msg.getTarget()))
+                            group+=string;
+                    }
+                    clients.get(msg.getTarget()).sendToSocket(new Message(0,"",group),"1001");
+
                 }
                 break;
         }

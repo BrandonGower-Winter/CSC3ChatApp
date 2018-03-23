@@ -1,7 +1,6 @@
 import com.jfoenix.controls.*;
 import com.jfoenix.transitions.hamburger.HamburgerSlideCloseTransition;
 import javafx.application.Platform;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
@@ -10,7 +9,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
-import javafx.stage.WindowEvent;
 import java.awt.*;
 import java.io.*;
 import java.util.HashMap;
@@ -40,14 +38,12 @@ public class Controller1 {
     @FXML public void initialize()
     {
         //saves current user data and notifies server before closing the application
-        Main.stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-            @Override
-            public void handle(WindowEvent event) {
-                logData();
-                officialExit();
-            }
+        Main.stage.setOnCloseRequest(event -> {
+            logData();
+            officialExit();
         });
 
+        ClientApplication.requestData(Bridge.user);
 
         contactsList.getItems().add(new Label("Broadcast"));
         tempHist.put("Broadcast","");
@@ -80,39 +76,36 @@ public class Controller1 {
         tabPane.getTabs().addAll(contacts, chats, groups);
 
 
-        groupList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            switcher(observable.getValue().getText());
-        });
 
-        chatsList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            switcher(observable.getValue().getText());
-        });
+        groupList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> switcher(observable.getValue().getText()));
 
-        contactsList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            switcher(observable.getValue().getText());
-        });
+        chatsList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> switcher(observable.getValue().getText()));
+
+        contactsList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> switcher(observable.getValue().getText()));
 
 
-
-        //chatspace
         chatSpace.setText("Welcome "+Bridge.user+"!");
 
 
 
-        //handling hamburger
+        //Revealing more options to user
         HamburgerSlideCloseTransition burgerTask = new HamburgerSlideCloseTransition(hamburger);
         burgerTask.setRate(-1);
-        hamburger.addEventHandler(MouseEvent.MOUSE_PRESSED, (e)->{
+        hamburger.addEventHandler(MouseEvent.MOUSE_PRESSED, (e)->
+        {
             burgerTask.setRate(burgerTask.getRate()*-1);
             burgerTask.play();
             burgerPressed();
         });
 
 
-        try {
+        //sets up drawer from a different fxml file with a different controller
+        try
+        {
             VBox box = FXMLLoader.load(getClass().getResource("resources/Drawer.fxml"));
             drawer.setSidePane(box);
-        } catch (IOException e) {
+        } catch (IOException e)
+        {
             e.printStackTrace();
         }
 
@@ -228,89 +221,107 @@ public class Controller1 {
     {
         JFXButton button = ((JFXButton)(Main.stage.getScene().getRoot().lookup("#headerInfo")));
 
-        if ((text1.contains("Group already exists!"))) {
-            Platform.runLater(() -> {
-                button.setText("Group already exists!");
-                button.setStyle("-fx-background-color: white;");
-            });
-            return;         //order matters for this block
-        }
-
-        button.setStyle("-fx-background-color: red;");
-        Platform.runLater(() -> button.setText("New Message from: "+text));
-
-        if (tempHist.containsKey(text))
-            tempHist.replace(text,tempHist.get(text)+text1);
-
-
-        if (text.substring(0,1).compareTo("*")==0 && !tempHist.containsKey(text))
+        if (button!=null)
         {
-            button.setStyle("-fx-background-color: blue;");
-            if (!tempHist.containsKey(text))
+            if ((text1.contains("Group already exists!"))) {
+                Platform.runLater(() -> {
+                    button.setText("Group already exists!");
+                    button.setStyle("-fx-background-color: white;");
+                });
+                return;         //order matters for this block
+            }
+
+            button.setStyle("-fx-background-color: red;");
+            Platform.runLater(() -> button.setText("New Message from: "+text));
+
+            if (tempHist.containsKey(text))
+                tempHist.replace(text,tempHist.get(text)+text1);
+
+
+            if (text.substring(0,1).compareTo("*")==0 && !tempHist.containsKey(text))
             {
-                tempHist.put((text),text1);
+                button.setStyle("-fx-background-color: blue;");
+                if (!tempHist.containsKey(text))
+                {
+                    tempHist.put((text),text1);
+                }
+            }
+
+            if (selectedUser.compareTo(text)==0)
+                Platform.runLater(() ->
+                {
+                    JFXTextArea textArea = (JFXTextArea)Main.stage.getScene().getRoot().lookup("#chatSpace");
+                    textArea.appendText(text1);
+                });
+
+
+            if ((text.compareTo("0000")==0))
+                Platform.runLater(() -> {
+                    button.setText("Offline at the moment... :(");
+                    button.setStyle("-fx-background-color: white;");
+                });
+            else if ((text.compareTo("0001")==0))
+            {
+                Platform.runLater(() -> {
+                    button.setText("You were friends before now... :)");
+                    button.setStyle("-fx-background-color: white;");
+                });
+            }
+            else if ((text.compareTo("0002")==0))
+            {
+                Platform.runLater(() -> {
+                    button.setText("Successfully added...");
+                    button.setStyle("-fx-background-color: blue;");
+                });
+            }
+            else if ((text.compareTo("0003")==0))
+            {
+                Platform.runLater(() -> {
+                    button.setText("Username not found in our servers :(");
+                    button.setStyle("-fx-background-color: white;");
+                });
+            }
+            else if ((text.compareTo("0004")==0))
+            {
+                Platform.runLater(() -> {
+                    button.setText(text1.substring(text1.indexOf(":")+1)+" has added you as their friend! (click to refresh)");
+                    button.setStyle("-fx-background-color: blue;");
+                });
+            }
+
+            else if (text1.contains("GROUP"))
+            {
+                Platform.runLater(() -> {
+                    button.setText(text1.substring(0,text1.indexOf(":")+1)+" is a new group! (click to refresh)");
+                    button.setStyle("-fx-background-color: blue;");
+                });
+            }
+
+            else if (text1.contains("Added a new member to the group:"))
+            {
+                System.out.println("heere");
+                Platform.runLater(() -> {
+                    button.setText("new group member added (click to refresh)");
+                    button.setStyle("-fx-background-color: blue;");
+                });
+                //order matters for this block
+            }
+        }
+        else {
+            if ((text.compareTo("1000")==0))
+            {
+                System.out.println(text1);
+            }
+
+            else if ((text.compareTo("1001")==0))
+            {
+                System.out.println(text1);
             }
         }
 
-        if (selectedUser.compareTo(text)==0)
-            Platform.runLater(() ->
-            {
-                JFXTextArea textArea = (JFXTextArea)Main.stage.getScene().getRoot().lookup("#chatSpace");
-                textArea.appendText(text1);
-            });
 
 
-        if ((text.compareTo("0000")==0))
-            Platform.runLater(() -> {
-                button.setText("Offline at the moment... :(");
-                button.setStyle("-fx-background-color: white;");
-            });
-        else if ((text.compareTo("0001")==0))
-        {
-            Platform.runLater(() -> {
-                button.setText("You were friends before now... :)");
-                button.setStyle("-fx-background-color: white;");
-            });
-        }
-        else if ((text.compareTo("0002")==0))
-        {
-            Platform.runLater(() -> {
-                button.setText("Successfully added...");
-                button.setStyle("-fx-background-color: blue;");
-            });
-        }
-        else if ((text.compareTo("0003")==0))
-        {
-            Platform.runLater(() -> {
-                button.setText("Username not found in our servers :(");
-                button.setStyle("-fx-background-color: white;");
-            });
-        }
-        else if ((text.compareTo("0004")==0))
-        {
-            Platform.runLater(() -> {
-                button.setText(text1.substring(text1.indexOf(":")+1)+" has added you as their friend! (click to refresh)");
-                button.setStyle("-fx-background-color: blue;");
-            });
-        }
 
-        else if (text1.contains("GROUP"))
-        {
-            Platform.runLater(() -> {
-                button.setText(text1.substring(0,text1.indexOf(":")+1)+" is a new group! (click to refresh)");
-                button.setStyle("-fx-background-color: blue;");
-            });
-        }
-
-        if (text1.contains("Added a new member to the group:"))
-        {
-            System.out.println("heere");
-            Platform.runLater(() -> {
-                button.setText("new group member added (click to refresh)");
-                button.setStyle("-fx-background-color: blue;");
-            });
-            //order matters for this block
-        }
 
     }
 

@@ -215,4 +215,12 @@ public class ClientApplication
     }
   }
 
+  public static void requestData(String string)
+  {
+    try {
+      out.writeUTF("13|"+string+"|fix");
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
 }
