@@ -2,14 +2,19 @@ import java.net.*;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
-
+/*
+* Server client thread class
+* @author Brandon
+ */
 public class ServerClientThread extends Thread
 {
   private String clientName;
   private Socket serverClientConnection;
   private Server server;
   private HashMap<String,ArrayList<String>> fileBuffer;
-
+  /*
+  * Constructor used to pass the socket connection and the host server object into the thread
+   */
   ServerClientThread(Socket socket, Server server)
   {
     this.clientName = "UNDEFINED";
@@ -17,7 +22,10 @@ public class ServerClientThread extends Thread
     this.server = server;
     fileBuffer = new HashMap<>();
   }
-
+  /*
+  * Run function
+  * Manages input incoming from client to which this thread is dedicated to.
+   */
   public void run()
   {
     try
@@ -26,15 +34,15 @@ public class ServerClientThread extends Thread
       DataOutputStream tempOutputStream = new DataOutputStream(serverClientConnection.getOutputStream());
       //User login loop. Must login before sending messages.
       Message clientLoginDetails = new Message();
-      ensureLoginLoop:while(true)
+      ensureLoginLoop:while(true) //Infinite loop to guarantee login or registration
       {
-        clientLoginDetails = Server.parseMesseage(in.readUTF());
+        clientLoginDetails = Server.parseMesseage(in.readUTF()); //Get user login details
         //Manage user login
         //Will add to function later
         //Add login and registration differentiation.
         switch(clientLoginDetails.getCommand())
         {
-          case 2:
+          case 2: //Registration
             if(server.register(clientLoginDetails)) //Successful registration
             {
               tempOutputStream.writeUTF("50|" + clientLoginDetails.getTarget() + "|2");
@@ -48,8 +56,8 @@ public class ServerClientThread extends Thread
               tempOutputStream.writeUTF("50|" + clientLoginDetails.getTarget() + "|3");
               continue ensureLoginLoop; //Skip because we don't want to create this client
             }
-          case 3:
-            if(server.login(clientLoginDetails)) //Login registration
+          case 3: // Login
+            if(server.login(clientLoginDetails)) //Login success
             {
               tempOutputStream.writeUTF("50|" + clientLoginDetails.getTarget() + "|0");
               clientName = clientLoginDetails.getTarget();
@@ -66,7 +74,7 @@ public class ServerClientThread extends Thread
 
       }
       System.out.println("Connected to " + serverClientConnection.getRemoteSocketAddress());
-      while(true)
+      while(true) //Infinite loop for receiving message input.
       {
         String toSend = in.readUTF();
         System.out.println("User: @" + clientName + " typed: " + toSend);
@@ -91,21 +99,25 @@ public class ServerClientThread extends Thread
       e.printStackTrace();
     }
   }
-
+  /*
+    *This function sends a msg to the client from the sender
+   */
   void sendToSocket(Message msg, String sender)
   {
     try
     {
       msg.setTarget(sender);
       DataOutputStream out = new DataOutputStream(serverClientConnection.getOutputStream());
-      out.writeUTF(msg.toString());
+      out.writeUTF(msg.toString()); //Send message to client
     }
     catch(IOException e)
     {
       e.printStackTrace();
     }
   }
-
+  /*
+  * This function asks the user for permission to send a file
+   */
   public void sendFilePermissionMessage(Message msg, String sender)
   {
     try
@@ -122,7 +134,9 @@ public class ServerClientThread extends Thread
       e.printStackTrace();
     }
   }
-
+  /*
+  * This function sends a file
+   */
   public void sendFile(String sender,boolean sendFile)
   {
     try
@@ -148,7 +162,9 @@ public class ServerClientThread extends Thread
       e.printStackTrace();
     }
   }
-
+  /*
+  * This function adds a Network file to the file buffer
+   */
   public void addBitToFileList(String sender, Message msg)
   {
     //Add file to hashmap that has an array list of strings
