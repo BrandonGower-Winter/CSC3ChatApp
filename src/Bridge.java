@@ -1,7 +1,10 @@
 import javafx.application.Application;
-
+/**
+ * Designed to support encryption of passwords
+ * */
 class Bridge
 {
+
     public static String user ="";
     public static String pass ="";
 

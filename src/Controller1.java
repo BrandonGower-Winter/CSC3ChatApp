@@ -11,11 +11,14 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.WindowEvent;
-
 import java.awt.*;
 import java.io.*;
 import java.util.HashMap;
 import java.util.Scanner;
+
+/**
+ * Controller for the Home.fxml file
+ * */
 
 public class Controller1 {
     @FXML private JFXTabPane tabPane;
@@ -36,6 +39,7 @@ public class Controller1 {
 
     @FXML public void initialize()
     {
+        //saves current user data and notifies server before closing the application
         Main.stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
             @Override
             public void handle(WindowEvent event) {
@@ -44,9 +48,11 @@ public class Controller1 {
             }
         });
 
+
         contactsList.getItems().add(new Label("Broadcast"));
         tempHist.put("Broadcast","");
 
+        //start at 2 because 0 and 1 are reserved for user status and password
         for (int x =2; x< MultiUsers.database.getUserData().get(Bridge.user).size(); x++){
             String string = MultiUsers.database.getUserData().get(Bridge.user).get(x);
             contactsList.getItems().add(new Label(string));
@@ -54,34 +60,13 @@ public class Controller1 {
         }
 
 
-
-
         groups = new Tab("Groups");
         groups.setContent(groupList);
 
-
-        //bad programming practice
-        Scanner scanner = null;
-        try {
-            scanner = new Scanner(new FileInputStream("./resources/groups"));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        while (scanner.hasNextLine())
+        for (String string: MultiUsers.database.getGroupData().keySet())
         {
-            String string = scanner.nextLine();
-            String name = string.substring(0,string.indexOf("|"));
-            string = string.substring(string.indexOf("|")+1);
-            String[] strings = string.split(",");
-
-            for (String s: strings)
-            {
-                if (s.compareTo(Bridge.user)==0)
-                {
-                    groupList.getItems().add(new Label(name));
-                }
-            }
-
+            if (MultiUsers.database.getGroupData().get(string).contains(Bridge.user))
+                groupList.getItems().add(new Label(string));
         }
 
         groupList.setId("groupFXMLelement");

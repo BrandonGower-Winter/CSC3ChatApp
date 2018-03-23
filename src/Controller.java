@@ -6,9 +6,12 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-
 import java.io.IOException;
 
+
+/**
+ * Controller for the login.fxml file
+ * */
 public class Controller {
     @FXML JFXTextField userN;
     @FXML JFXPasswordField userPass;
@@ -32,7 +35,6 @@ public class Controller {
             userN.setPromptText("Failed to login!");
             userPass.clear();
         }
-
     }
 
     @FXML void reg(ActionEvent event){

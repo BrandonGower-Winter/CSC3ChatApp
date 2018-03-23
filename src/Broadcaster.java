@@ -18,12 +18,14 @@ public class Broadcaster extends Thread{
     public void run(){
       if(isServer)
       {
+          //server sends a broadcast to all online users
         for (String client: clients.keySet()){
                 clients.get(client).sendToSocket(msg,sender);
         }
       }
       else
       {
+          //user broadcasts to friends
         for (String client: clients.keySet()){
             if (client.compareTo(sender)!=0 && userBase.isFriend(sender,client))
                 clients.get(client).sendToSocket(msg,sender);
