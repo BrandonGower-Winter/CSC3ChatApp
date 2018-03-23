@@ -36,6 +36,7 @@ public class Controller2 {
             @Override
             public void run() {
                 Controller1.logData();
+                Controller1.officialExit();
             }
         });
         thread.start();

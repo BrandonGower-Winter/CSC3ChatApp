@@ -40,7 +40,7 @@ public class Controller1 {
             @Override
             public void handle(WindowEvent event) {
                 logData();
-                System.exit(0);
+                officialExit();
             }
         });
 
@@ -157,8 +157,9 @@ public class Controller1 {
         headerInfo.setText("Chatting with: "+selected);
         headerInfo.setStyle("-fx-background-color: orange;");
 
-        if (tempHist.get(selectedUser).length()>0)
-            chatSpace.appendText(tempHist.get(selectedUser));
+        if (tempHist.containsKey(selectedUser))
+            if (tempHist.get(selectedUser).length()>0)
+                chatSpace.appendText(tempHist.get(selectedUser));
 
         setChats();
     }
@@ -417,11 +418,21 @@ public class Controller1 {
     static void exiting()
     {
         logData();
-        Platform.runLater(() -> {
-            JFXButton button = ((JFXButton)(Main.stage.getScene().getRoot().lookup("#headerInfo")));
-            button.setText("Server is offline- Restart");
-            button.setStyle("-fx-background-color: violet;");
+        Platform.runLater(() ->
+        {
             Main.stage.getScene().getRoot().setDisable(true);
+            JFXButton button = ((JFXButton)(Main.stage.getScene().getRoot().lookup("#headerInfo")));
+            if (button!=null)
+            {
+                button.setText("Server is offline- Restart");
+                button.setStyle("-fx-background-color: violet;");
+            }
         });
+    }
+
+    static void officialExit()
+    {
+        ClientApplication.logOut(Bridge.user,Bridge.pass);
+        System.exit(0);
     }
 }
