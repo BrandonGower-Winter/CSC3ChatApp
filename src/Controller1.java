@@ -157,8 +157,9 @@ public class Controller1 {
         headerInfo.setText("Chatting with: "+selected);
         headerInfo.setStyle("-fx-background-color: orange;");
 
-        if (tempHist.get(selectedUser).length()>0)
-            chatSpace.appendText(tempHist.get(selectedUser));
+        if (tempHist.containsKey(selectedUser))
+            if (tempHist.get(selectedUser).length()>0)
+                chatSpace.appendText(tempHist.get(selectedUser));
 
         setChats();
     }
