@@ -34,46 +34,8 @@ public class Controller2 {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                logData();
+                Controller1.logData();
             }
         }).start();
     }
-    static void logData()
-    {
-        HashMap<String, String> hashMap = Controller1.tempHist;
-
-        try
-        {
-            FileWriter userFile = new FileWriter("./resources/chats"+Bridge.user+"data",false);
-            BufferedWriter userFileBuffer = new BufferedWriter(userFile);
-            PrintWriter printer = new PrintWriter(userFileBuffer);
-
-            for(String user : hashMap.keySet())
-            {
-                if (user.contains("*"))
-                {
-                    printer.print("##$"+user+hashMap.get(user)+"\n");
-                }
-
-                else if (user.contains("Broadcast"))
-                {
-                    printer.print("##^"+user+hashMap.get(user)+"\n");
-                }
-                else
-                {
-                    printer.print("##@"+user+hashMap.get(user)+"\n");
-                }
-
-            }
-
-            printer.close();
-            userFileBuffer.close();
-            userFile.close();
-        }
-        catch(IOException e)
-        {
-            e.printStackTrace();
-        }
-    }
-
 }

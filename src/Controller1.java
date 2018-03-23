@@ -1,6 +1,7 @@
 import com.jfoenix.controls.*;
 import com.jfoenix.transitions.hamburger.HamburgerSlideCloseTransition;
 import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
@@ -8,21 +9,13 @@ import javafx.scene.control.Tab;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
-import org.omg.CORBA.CODESET_INCOMPATIBLE;
+import javafx.stage.WindowEvent;
 
 import java.awt.*;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.nio.file.Files;
+import java.io.*;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class Controller1 {
     @FXML private JFXTabPane tabPane;
@@ -38,12 +31,17 @@ public class Controller1 {
     private JFXListView<Label> contactsList = new JFXListView<>();
 
     static HashMap<String, String> tempHist = new HashMap<>(0);
+    private static String selectedUser="";
 
-
-    static String selectedUser="";
 
     @FXML public void initialize()
     {
+        Main.stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent event) {
+                logData();
+            }
+        });
 
         contactsList.getItems().add(new Label("Broadcast"));
         tempHist.put("Broadcast","");
@@ -335,10 +333,10 @@ public class Controller1 {
             if (sendingArea.getText().length()>0)
             {
                 Platform.runLater(() ->
-                        {
-                            Main.stage.getScene().getRoot().lookup("#headerInfo").setStyle("-fx-background-color: orange;");
-                            ((JFXButton)Main.stage.getScene().getRoot().lookup("#headerInfo")).setText("Chatting with: "+selectedUser);
-                        });
+                {
+                    Main.stage.getScene().getRoot().lookup("#headerInfo").setStyle("-fx-background-color: orange;");
+                    ((JFXButton)Main.stage.getScene().getRoot().lookup("#headerInfo")).setText("Chatting with: "+selectedUser);
+                });
                 ClientApplication.message(selectedUser,sendingArea.getText());
                 chatSpace.appendText("\nMe: "+sendingArea.getText());
                 tempHist.replace(selectedUser,chatSpace.getText());
@@ -375,6 +373,44 @@ public class Controller1 {
         }
 
 
+    }
+
+    static void logData()
+    {
+        HashMap<String, String> hashMap = Controller1.tempHist;
+
+        try
+        {
+            FileWriter userFile = new FileWriter("./resources/chats"+Bridge.user+"data",false);
+            BufferedWriter userFileBuffer = new BufferedWriter(userFile);
+            PrintWriter printer = new PrintWriter(userFileBuffer);
+
+            for(String user : hashMap.keySet())
+            {
+                if (user.contains("*"))
+                {
+                    printer.print("##$"+user+hashMap.get(user)+"\n");
+                }
+
+                else if (user.contains("Broadcast"))
+                {
+                    printer.print("##^"+user+hashMap.get(user)+"\n");
+                }
+                else
+                {
+                    printer.print("##@"+user+hashMap.get(user)+"\n");
+                }
+
+            }
+
+            printer.close();
+            userFileBuffer.close();
+            userFile.close();
+        }
+        catch(IOException e)
+        {
+            e.printStackTrace();
+        }
     }
 
 }
