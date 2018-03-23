@@ -31,11 +31,19 @@ public class Controller2 {
     @FXML public void logout(ActionEvent event)
     {
         Platform.exit();
+        Thread thread =
         new Thread(new Runnable() {
             @Override
             public void run() {
                 Controller1.logData();
             }
-        }).start();
+        });
+        thread.start();
+        try {
+            thread.join();
+            System.exit(0);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }

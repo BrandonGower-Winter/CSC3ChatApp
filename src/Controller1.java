@@ -40,6 +40,7 @@ public class Controller1 {
             @Override
             public void handle(WindowEvent event) {
                 logData();
+                System.exit(0);
             }
         });
 
@@ -413,4 +414,14 @@ public class Controller1 {
         }
     }
 
+    static void exiting()
+    {
+        logData();
+        Platform.runLater(() -> {
+            JFXButton button = ((JFXButton)(Main.stage.getScene().getRoot().lookup("#headerInfo")));
+            button.setText("Server is offline- Restart");
+            button.setStyle("-fx-background-color: violet;");
+            Main.stage.getScene().getRoot().setDisable(true);
+        });
+    }
 }

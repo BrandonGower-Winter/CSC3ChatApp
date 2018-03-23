@@ -82,7 +82,8 @@ public class ClientThread extends Thread
     }
     catch(IOException e)
     {
-      e.printStackTrace();
+      Controller1.exiting();
+   //   e.printStackTrace();
     }
   }
 

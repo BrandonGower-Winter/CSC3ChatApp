@@ -79,6 +79,7 @@ public class ServerClientThread extends Thread
     }
     catch(IOException e)
     {
+      System.out.println("Client logged out!!!");
       e.printStackTrace();
     }
   }
