@@ -85,31 +85,18 @@ class MultiUsers extends Thread
     }
 
     synchronized void groupMessage(Message msg, HashMap<String, ServerClientThread> clients, String sender) {
+        if(!database.getGroupData().containsKey(msg.getTarget()))
+        {
+            return;
+        }
         new Thread(() -> {
-            try {
-                Scanner scanner = new Scanner(new FileInputStream("./resources/groups"));
-
-                while (scanner.hasNextLine())
+                for(String member : database.getGroupData().get(msg.getTarget()))
                 {
-                    String s = scanner.nextLine();
-                    if (s.length()>0)
+                    if(clients.containsKey(member) && member.compareTo(sender) != 0)
                     {
-                        if (s.substring(0,s.indexOf("|")).compareTo(msg.getTarget())==0)
-                        {
-                            String[] messages = s.substring(s.indexOf("|")+1).split(",");
-
-                            for (String string: messages)
-                            {
-                                if (clients.containsKey(string) && string.compareTo(sender)!=0)
-                                    clients.get(string).sendToSocket(new Message(0,string,"("+sender+") "+msg.getContent()),msg.getTarget());
-                            }
-                        }
+                        clients.get(member).sendToSocket(new Message(0,msg.getTarget(),"(" +sender +") "+ msg.getContent()),msg.getTarget());
                     }
-
                 }
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
 
         }).start();
     }

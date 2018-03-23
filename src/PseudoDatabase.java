@@ -40,6 +40,18 @@ public class PseudoDatabase {
           scFriends.close();
         }
         scFriendsFile.close();
+
+        //Read group data
+          Scanner scGroupFile = new Scanner((new File("./resources/groups")));
+
+          while(scGroupFile.hasNextLine())
+          {
+              Scanner scGroupLine = new Scanner(scGroupFile.nextLine()).useDelimiter("\\|");
+              createGroup(scGroupLine.next(),scGroupLine.next());
+              scGroupLine.close();
+          }
+          scGroupFile.close();
+
       }
       catch(FileNotFoundException e)
       {
@@ -164,21 +176,11 @@ public class PseudoDatabase {
 
     private synchronized boolean userExists(String user)
     {
-        try {
-            Scanner scanner = new Scanner(new FileInputStream("./resources/friends"));
-            while (scanner.hasNextLine())
-            {
-                String s = scanner.nextLine();
-                if (s.substring(0,s.indexOf("|")).compareTo(user)==0)
-                    return true;
-            }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        return false;
+        return userData.containsKey(user);
     }
 
     synchronized ArrayList<String> createGroup(String name, String members, String owner) throws IOException {
+        /*
         Scanner scanner = new Scanner(new FileInputStream("./resources/groups"));
 
         while (scanner.hasNextLine())
@@ -203,25 +205,36 @@ public class PseudoDatabase {
                 mem+=s;
             }
         }
+        */
 
-        FileWriter userFile = new FileWriter("./resources/groups",true);//True appends to file
-        BufferedWriter userFileBuffer = new BufferedWriter(userFile);
-        PrintWriter printer = new PrintWriter(userFileBuffer);
-        printer.println(name + "|" + mem);
-        printer.close();
-        userFileBuffer.close();
-        userFile.close();
-
-
-
-        return flag;
+        ArrayList<String> membersList  = new ArrayList<String>();
+        membersList.add(owner);
+        for(String s : members.split(","))
+        {
+            if(userData.get(owner).contains(s))
+            {
+                membersList.add(s);
+            }
+        }
+        groupData.put(name,membersList);
+        writeNewGroup(name,membersList);
+        return membersList;
 
     }
 
+    private synchronized  void createGroup(String name, String members) //Specifically for server use
+    {
+        ArrayList<String> membersList  = new ArrayList<String>();
+        for(String s : members.split(","))
+        {
+            membersList.add(s);
 
+        }
+        groupData.put(name,membersList);
+    }
 
     synchronized String[] addMem(String groupName, String owner, String mem) throws IOException {
-
+        /*
         Scanner scanner = new Scanner(new FileInputStream("./resources/groups"));
         boolean bool = false;
         int pos = 0;
@@ -246,26 +259,18 @@ public class PseudoDatabase {
             list.add(s);
             count++;
         }
+        */
 
-
-        if (bool)
+        if(groupData.containsKey(groupName) && !groupData.get(groupName).contains(mem))
         {
-            //not a pretty solution
-
-            FileWriter userFile = new FileWriter("./resources/groups",false);
-            BufferedWriter userFileBuffer = new BufferedWriter(userFile);
-            PrintWriter printer = new PrintWriter(userFileBuffer);
-            for (String string: list)
-            {
-                printer.println(string);
-            }
-            printer.close();
-            userFileBuffer.close();
-            userFile.close();
-
+            groupData.get(groupName).add(mem);
+            reWriteGroupFile();
+            return (String[]) groupData.get(groupName).toArray();
         }
-
-        return res;
+        else
+        {
+            return null;
+        }
     }
 
 
@@ -349,6 +354,56 @@ public class PseudoDatabase {
       {
         e.printStackTrace();
       }
+    }
+
+
+    private void writeNewGroup(String groupName, ArrayList<String> members)
+    {
+        try
+        {
+            String memberString = "";
+            for(int i = 0; i < members.size(); i++)
+            {
+                if(i + 1 == members.size())
+                {
+                    memberString += members.get(i);
+                }
+                else
+                {
+                    memberString += members.get(i) + ",";
+                }
+            }
+            FileWriter userFile = new FileWriter("./resources/groups",true);//True appends to file
+            BufferedWriter userFileBuffer = new BufferedWriter(userFile);
+            PrintWriter printer = new PrintWriter(userFileBuffer);
+            printer.println(groupName + "|" + memberString);
+            printer.close();
+            userFileBuffer.close();
+            userFile.close();
+        }
+        catch(IOException e)
+        {
+            e.printStackTrace();
+        }
+
+    }
+
+    private void reWriteGroupFile()
+    {
+        try
+        {
+            PrintWriter clearer = new PrintWriter(new File("./resources/groups")); //Clears groups file
+            clearer.close();
+            for(String groupName : groupData.keySet())
+            {
+                writeNewGroup(groupName,groupData.get(groupName));
+            }
+        }
+        catch(FileNotFoundException e)
+        {
+            e.printStackTrace();
+        }
+
     }
 
     public HashMap<String, ArrayList<String>> getUserData() {
