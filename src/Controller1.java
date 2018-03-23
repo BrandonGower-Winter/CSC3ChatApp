@@ -39,7 +39,13 @@ public class Controller1 {
         Main.stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
             @Override
             public void handle(WindowEvent event) {
+                ClientApplication.logOut(Bridge.user,Bridge.pass);
                 logData();
+                try {
+                    ClientApplication.message(selectedUser,"");//   *   *   *   *   *   *   *   *   *   *   *   *
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 System.exit(0);
             }
         });
@@ -417,11 +423,15 @@ public class Controller1 {
     static void exiting()
     {
         logData();
-        Platform.runLater(() -> {
-            JFXButton button = ((JFXButton)(Main.stage.getScene().getRoot().lookup("#headerInfo")));
-            button.setText("Server is offline- Restart");
-            button.setStyle("-fx-background-color: violet;");
+        Platform.runLater(() ->
+        {
             Main.stage.getScene().getRoot().setDisable(true);
+            JFXButton button = ((JFXButton)(Main.stage.getScene().getRoot().lookup("#headerInfo")));
+            if (button!=null)
+            {
+                button.setText("Server is offline- Restart");
+                button.setStyle("-fx-background-color: violet;");
+            }
         });
     }
 }

@@ -71,11 +71,19 @@ public class ServerClientThread extends Thread
         String toSend = in.readUTF();
         System.out.println("User: @" + clientName + " typed: " + toSend);
         server.send(Server.parseMesseage(toSend),clientName);
+
         //Ignore this does nothing healthy right now
         if(toSend.compareTo("exit") == 0)
           break;
       }
       serverClientConnection.close();
+    }
+    catch (EOFException e){
+      try {
+        serverClientConnection.close();
+      } catch (IOException e1) {
+        e1.printStackTrace();
+      }
     }
     catch(IOException e)
     {
