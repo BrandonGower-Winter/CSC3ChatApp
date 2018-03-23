@@ -36,7 +36,8 @@ public class ServerClientThread extends Thread
       Message clientLoginDetails = new Message();
       ensureLoginLoop:while(true) //Infinite loop to guarantee login or registration
       {
-        clientLoginDetails = Server.parseMesseage(in.readUTF()); //Get user login details
+        String s = in.readUTF();
+        clientLoginDetails = Server.parseMesseage(s); //Get user login details
         //Manage user login
         //Will add to function later
         //Add login and registration differentiation.

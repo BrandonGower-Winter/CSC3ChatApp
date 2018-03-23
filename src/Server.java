@@ -224,7 +224,7 @@ public class Server extends Thread
                     {
                         friends += MultiUsers.database.getUserData().get(msg.getTarget()).get(x)+"@";
                     }
-                    clients.get(msg.getTarget()).sendToSocket(new Message(0,"",friends),"1000");
+                    clients.get(msg.getTarget()).sendToSocket(new Message(0,"blank for fix",friends),"W1000");
 
 
                     String group = "";
@@ -233,7 +233,7 @@ public class Server extends Thread
                         if (MultiUsers.database.getGroupData().get(string).contains(msg.getTarget()))
                             group+=string+"@";
                     }
-                    clients.get(msg.getTarget()).sendToSocket(new Message(0,"",group),"1001");
+                    clients.get(msg.getTarget()).sendToSocket(new Message(0,"blank for fix",group),"W1001");
 
                 }
                 break;

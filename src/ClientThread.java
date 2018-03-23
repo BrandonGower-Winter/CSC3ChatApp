@@ -25,7 +25,8 @@ public class ClientThread extends Thread
       //Manages user Input.
       while(true)
       {
-        Message msg = Server.parseMesseage(in.readUTF());
+        String s = in.readUTF();
+        Message msg = Server.parseMesseage(s);
         //Msg code management would go here
         switch(msg.getCommand())
         {
