@@ -294,7 +294,7 @@ public class Controller1 {
             }
         }
         else {
-            if ((text.compareTo("W1000")==0))
+            if ((text.compareTo("W1000")==0) && text1.compareTo("\nW1000: *")!=0)
             {
                 String t = text1.substring(text1.indexOf(":")+2);
                 String users[] = t.split("@");
@@ -305,7 +305,7 @@ public class Controller1 {
 
             }
 
-            else if ((text.compareTo("W1001")==0))
+            else if ((text.compareTo("W1001")==0) && text1.compareTo("\nW1001: *")!=0)
             {
                 String t = text1.substring(text1.indexOf(":")+2);
                 String group[] = t.split("@");
