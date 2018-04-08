@@ -207,7 +207,7 @@ public class Controller1 {
     {
         JFXButton button = ((JFXButton)(Main.stage.getScene().getRoot().lookup("#headerInfo")));
 
-        if (button!=null && text.compareTo("W1000")!=0 && text.compareTo("W1000")!=0)
+        if (button!=null && text.compareTo("W1001")!=0 && text.compareTo("W1000")!=0)
         {
             if ((text1.contains("Group already exists!"))) {
                 Platform.runLater(() -> {
