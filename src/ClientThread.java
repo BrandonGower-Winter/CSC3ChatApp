@@ -26,7 +26,7 @@ public class ClientThread extends Thread
       while(true)
       {
         String s = in.readUTF();
-        if (s.compareTo("0|W1000|")==0)
+        if (s.compareTo("0|W1000|")==0 || s.compareTo("0|W1001|")==0)
           s+="*";
         Message msg = Server.parseMesseage(s);
         //Msg code management would go here
