@@ -189,7 +189,8 @@ public class Server extends Thread
                     }
                 }
                 else
-                    clients.get(msg.getTarget()).addBitToFileList(sender,msg);
+                    if (clients.containsKey(msg.getTarget()))
+                        clients.get(msg.getTarget()).addBitToFileList(sender,msg);
                 break;
             case 12:
                 //accept or deny friend request.
